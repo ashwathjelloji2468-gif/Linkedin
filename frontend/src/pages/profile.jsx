@@ -466,6 +466,8 @@ export default function Profile() {
                 </span>
               ))}
             </div>
+          ) : (
+            <span className="text-xs text-slate-400 text-center py-2 block">No skills added yet.</span>
           )}
 
           {recommendedSkillsList.length > 0 && (
