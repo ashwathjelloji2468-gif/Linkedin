@@ -50,6 +50,14 @@ const UserSchema = new mongoose.Schema(
         ref: "User", // Self-referencing relationship for network
       },
     ],
+    appliedJobs: [
+      {
+        jobId: { type: Number, required: true },
+        appliedAt: { type: Date, default: Date.now },
+        resumeOption: { type: String },
+        coverLetter: { type: String }
+      }
+    ],
     skills: [String],
     experience: [
       {

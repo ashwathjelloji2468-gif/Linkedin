@@ -7,6 +7,7 @@ import {
   login,
   getUserAndProfile,
   uploadProfilePicture,
+  uploadBannerPicture,
   updateUserProfile,
   updateProfileData,
   getAllUsers,
@@ -15,6 +16,8 @@ import {
   getMyConnectionRequests,
   whatAreMyConnections,
   acceptConnectionRequest,
+  applyJob,
+  getAppliedJobs
 } from "../controllers/users.controllers.js";
 
 const router = Router();
@@ -36,6 +39,13 @@ router.post(
   uploadProfilePicture,
 );
 
+router.post(
+  "/upload-banner",
+  protectRoute,
+  upload.single("bannerPic"),
+  uploadBannerPicture,
+);
+
 router.post("/register", register);
 router.post("/login", login);
 router.post("/user_update", updateUserProfile);
@@ -47,4 +57,6 @@ router.post("/user/send_connection_request/:userId", protectRoute, sendConnectio
 router.get("/requests",protectRoute, getMyConnectionRequests);
 router.get("/connections", protectRoute, whatAreMyConnections);
 router.put("/accept/:requestId", protectRoute, acceptConnectionRequest);
+router.post("/jobs/apply", protectRoute, applyJob);
+router.get("/jobs/applied", protectRoute, getAppliedJobs);
 export default router;

@@ -104,6 +104,9 @@ export const login = async (req, res) => {
       expiresIn: "3d",
     });
 
+    // Seed mock tech leaders and requests
+    await seedMockTechLeadersAndRequests(user._id);
+
     return res.status(200).json({
       message: "Login successful",
       token,
@@ -153,6 +156,32 @@ export const uploadProfilePicture = async (req, res) => {
   }
 };
 
+// 3.5 Upload Banner Picture
+export const uploadBannerPicture = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+
+    const userId = req.user.id;
+
+    // Update User model
+    await User.findByIdAndUpdate(
+      userId,
+      { bannerPicture: req.file.filename },
+      { new: true }
+    );
+
+    return res.status(200).json({
+      message: "Banner picture updated successfully",
+      bannerPicture: req.file.filename,
+    });
+  } catch (error) {
+    console.error("Banner upload error:", error.message);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 // 4. Update Profile Fields
 export const updateUserProfile = async (req, res) => {
   try {
@@ -193,9 +222,15 @@ export const getUserAndProfile = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
+    // Seed mock tech leaders and requests
+    await seedMockTechLeadersAndRequests(userId);
+
+    // Refetch user to get updated connections list/count
+    const refreshedUser = await User.findById(userId).select("-password");
+
     return res.status(200).json({
       message: "User data retrieved successfully",
-      user,
+      user: refreshedUser,
     });
   } catch (error) {
     console.error("Fetch user error:", error.message);
@@ -381,6 +416,36 @@ export const sendConnectionRequest = async (req, res) => {
       return res.status(400).json({ message: "You are already connected" });
     }
 
+    // Check if recipient is a mock tech leader
+    const isMockUser = [
+      "satya@microsoft.mock",
+      "sundar@google.mock",
+      "elon@tesla.mock",
+      "sam@openai.mock",
+      "jensen@nvidia.mock",
+      "zuck@meta.mock"
+    ].includes(recipient.email);
+
+    if (isMockUser) {
+      // Auto-accept request immediately
+      const newRequest = new ConnectionRequest({
+        sender: senderId,
+        recipient: userId,
+        status: "accepted"
+      });
+      await newRequest.save();
+
+      // Add to both connections lists
+      await User.findByIdAndUpdate(senderId, {
+        $addToSet: { connections: userId }
+      });
+      await User.findByIdAndUpdate(userId, {
+        $addToSet: { connections: senderId }
+      });
+
+      return res.status(201).json({ message: "Connected with leader successfully!" });
+    }
+
     // 5. Create the new request
     const newRequest = new ConnectionRequest({
       sender: senderId,
@@ -475,6 +540,253 @@ export const acceptConnectionRequest = async (req, res) => {
   } catch (error) {
     console.error("Error in acceptConnectionRequest:", error.message);
     res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+// 15. Apply for a Job
+export const applyJob = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { jobId, resumeOption, coverLetter } = req.body;
+
+    if (!jobId) {
+      return res.status(400).json({ message: "Job ID is required" });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Check if already applied
+    const alreadyApplied = user.appliedJobs.some((job) => job.jobId === Number(jobId));
+    if (alreadyApplied) {
+      return res.status(400).json({ message: "You have already applied for this job" });
+    }
+
+    user.appliedJobs.push({
+      jobId: Number(jobId),
+      appliedAt: new Date(),
+      resumeOption,
+      coverLetter
+    });
+
+    await user.save();
+
+    return res.status(200).json({
+      message: "Applied successfully",
+      appliedJobs: user.appliedJobs
+    });
+  } catch (error) {
+    console.error("Apply job error:", error.message);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+// 16. Get Applied Jobs
+export const getAppliedJobs = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    return res.status(200).json(user.appliedJobs || []);
+  } catch (error) {
+    console.error("Get applied jobs error:", error.message);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+// Seeding Mock Data Helper
+const mockLeadersData = [
+  {
+    name: "Satya Nadella",
+    username: "satyanadella",
+    email: "satya@microsoft.mock",
+    headline: "CEO at Microsoft",
+    about: "Empowering every person and every organization on the planet to achieve more.",
+    skills: ["AI", "Cloud Computing", "Leadership", "Azure", "Next.js", "React"],
+    experience: [
+      {
+        title: "Chief Executive Officer",
+        company: "Microsoft",
+        startDate: new Date("2014-02-04"),
+        description: "Leading Microsoft's cloud and AI transformation, empowering developers and organizations globally."
+      }
+    ],
+    education: [
+      {
+        school: "University of Chicago",
+        degree: "MBA",
+        fieldOfStudy: "Business Administration",
+        graduationYear: 1997
+      }
+    ]
+  },
+  {
+    name: "Sundar Pichai",
+    username: "sundarpichai",
+    email: "sundar@google.mock",
+    headline: "CEO at Google & Alphabet",
+    about: "Organizing the world's information and making it universally accessible and useful.",
+    skills: ["Google Cloud", "Gemini", "Product Management", "AI", "Mobile Software Engineer"],
+    experience: [
+      {
+        title: "Chief Executive Officer",
+        company: "Google",
+        startDate: new Date("2015-08-10"),
+        description: "Overseeing Google's product development, search engines, cloud platforms, and generative AI initiatives."
+      }
+    ],
+    education: [
+      {
+        school: "Stanford University",
+        degree: "MS",
+        fieldOfStudy: "Material Sciences",
+        graduationYear: 1995
+      }
+    ]
+  },
+  {
+    name: "Elon Musk",
+    username: "elonmusk",
+    email: "elon@tesla.mock",
+    headline: "CEO at Tesla, SpaceX & xAI",
+    about: "Accelerating the world's transition to sustainable energy, making life multiplanetary, and building Grok.",
+    skills: ["Engineering", "System Design", "AI", "Physics", "Docker", "Kubernetes"],
+    experience: [
+      {
+        title: "Chief Executive Officer & Chief Designer",
+        company: "SpaceX",
+        startDate: new Date("2002-05-06"),
+        description: "Designing and manufacturing advanced rockets and spacecraft to make life multiplanetary."
+      }
+    ],
+    education: [
+      {
+        school: "University of Pennsylvania",
+        degree: "BS",
+        fieldOfStudy: "Physics & Economics",
+        graduationYear: 1997
+      }
+    ]
+  },
+  {
+    name: "Sam Altman",
+    username: "samaltman",
+    email: "sam@openai.mock",
+    headline: "CEO at OpenAI",
+    about: "Ensuring that artificial general intelligence benefits all of humanity.",
+    skills: ["LLMs", "AGI", "API Integration", "Startups", "Python", "PyTorch"],
+    experience: [
+      {
+        title: "Chief Executive Officer",
+        company: "OpenAI",
+        startDate: new Date("2019-03-01"),
+        description: "Directing the research and deployment of safe and beneficial artificial general intelligence."
+      }
+    ],
+    education: [
+      {
+        school: "Stanford University",
+        degree: "Dropped out",
+        fieldOfStudy: "Computer Science",
+        graduationYear: 2005
+      }
+    ]
+  },
+  {
+    name: "Jensen Huang",
+    username: "jensenhuang",
+    email: "jensen@nvidia.mock",
+    headline: "CEO at NVIDIA",
+    about: "NVIDIA is the engine of accelerated computing and the next industrial revolution.",
+    skills: ["GPUs", "Blackwell", "CUDA", "Deep Learning", "System Design"],
+    experience: [
+      {
+        title: "Chief Executive Officer & Founder",
+        company: "NVIDIA",
+        startDate: new Date("1993-04-05"),
+        description: "Pioneering GPU-accelerated computing and shaping the future of industrial AI factories."
+      }
+    ],
+    education: [
+      {
+        school: "Stanford University",
+        degree: "MS",
+        fieldOfStudy: "Electrical Engineering",
+        graduationYear: 1992
+      }
+    ]
+  },
+  {
+    name: "Mark Zuckerberg",
+    username: "markzuckerberg",
+    email: "zuck@meta.mock",
+    headline: "CEO at Meta",
+    about: "Giving people the power to build community and bring the world closer together.",
+    skills: ["Open Source AI", "Llama", "Spatial Computing", "Metaverse", "React Native"],
+    experience: [
+      {
+        title: "Chief Executive Officer",
+        company: "Meta",
+        startDate: new Date("2004-02-04"),
+        description: "Building technologies that help people connect, find communities, and grow businesses."
+      }
+    ],
+    education: [
+      {
+        school: "Harvard University",
+        degree: "Dropped out",
+        fieldOfStudy: "Computer Science",
+        graduationYear: 2004
+      }
+    ]
+  }
+];
+
+const seedMockTechLeadersAndRequests = async (userId) => {
+  try {
+    const user = await User.findById(userId);
+    if (!user) return;
+
+    for (const leader of mockLeadersData) {
+      let leaderUser = await User.findOne({ email: leader.email });
+      if (!leaderUser) {
+        const hashedPassword = await bcrypt.hash("mock_password_123_random", 10);
+        leaderUser = new User({
+          ...leader,
+          password: hashedPassword,
+        });
+        await leaderUser.save();
+      }
+
+      // Check if they are already connected
+      if (user.connections.includes(leaderUser._id)) {
+        continue;
+      }
+
+      // Check if a request already exists between them
+      const existingRequest = await ConnectionRequest.findOne({
+        $or: [
+          { sender: user._id, recipient: leaderUser._id },
+          { sender: leaderUser._id, recipient: user._id }
+        ]
+      });
+
+      if (!existingRequest) {
+        // Create a pending invitation FROM the leader TO the user
+        const newRequest = new ConnectionRequest({
+          sender: leaderUser._id,
+          recipient: user._id,
+          status: "pending"
+        });
+        await newRequest.save();
+      }
+    }
+  } catch (error) {
+    console.error("Error seeding mock leaders and requests:", error.message);
   }
 };
 

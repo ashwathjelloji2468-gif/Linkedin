@@ -78,18 +78,45 @@ export default function Messages() {
       },
     ];
 
+    const defaultMessagesMap = {
+      "Satya Nadella": [
+        { sender: "contact", text: "Hello! Loved your latest post on AI agents.", time: "10:30 AM" },
+        { sender: "me", text: "Thank you Satya! Really excited about the future of tech.", time: "10:32 AM" },
+      ],
+      "Sundar Pichai": [
+        { sender: "contact", text: "Let's schedule some time to chat about Google Cloud integration.", time: "Yesterday" },
+      ],
+      "Elon Musk": [
+        { sender: "contact", text: "How is the scaling of your AI models going? We need more compute.", time: "2 days ago" },
+      ],
+      "Sam Altman": [
+        { sender: "contact", text: "Hey! What are you building with the new GPT-4o API?", time: "3 days ago" },
+      ],
+      "Jensen Huang": [
+        { sender: "contact", text: "The Blackwell GPUs are in full production. Let me know if you need allocation.", time: "1 week ago" },
+      ],
+      "Mark Zuckerberg": [
+        { sender: "contact", text: "Llama 3 is open source and fully accessible. Let's build something cool.", time: "1 week ago" },
+      ],
+    };
+
     // Combine connections with mock contacts to populate chats list
-    const connectionChats = connections.map((c, index) => ({
+    const connectionChats = connections.map((c) => ({
       _id: c._id || c.id,
       name: c.name,
       headline: c.headline || "LinkedIn Member",
       profilePicture: c.profilePicture,
-      messages: [
+      messages: defaultMessagesMap[c.name] || [
         { sender: "contact", text: `Hi, thank you for connecting! How are you doing?`, time: "12:00 PM" },
       ],
     }));
 
-    const combinedChats = [...connectionChats, ...defaultMockContacts];
+    // Filter out mock contacts that are already in connections
+    const filteredMockContacts = defaultMockContacts.filter(
+      (mock) => !connectionChats.some((cc) => cc.name.toLowerCase() === mock.name.toLowerCase())
+    );
+
+    const combinedChats = [...connectionChats, ...filteredMockContacts];
     setChats(combinedChats);
     
     if (combinedChats.length > 0 && !activeChatId) {
@@ -106,82 +133,124 @@ export default function Messages() {
 
   const generateHumanizedResponse = (contactName, userText) => {
     const text = userText.toLowerCase();
+
+    // Check for job openings/hiring/careers keywords
+    const isJobQuery = text.includes("job") || text.includes("opening") || text.includes("career") || text.includes("hiring") || text.includes("recruit") || text.includes("internship") || text.includes("position") || text.includes("role") || text.includes("vacancy");
     
+    // Check for sync/meet keywords
+    const isMeetQuery = text.includes("meeting") || text.includes("schedule") || text.includes("meet") || text.includes("sync") || text.includes("call") || text.includes("chat");
+
+    // Check for greeting keywords
+    const isGreeting = text.includes("hello") || text.includes("hi") || text.includes("hey") || text.includes("how are you") || text.includes("good morning") || text.includes("good afternoon");
+
     if (contactName === "Satya Nadella") {
+      if (isJobQuery) {
+        return "We are always looking for stellar engineering talent, particularly in our Azure AI and Web XT teams. We actually have a few openings for Frontend and Fullstack developers right now - you should check out the Microsoft Careers portal, or if you find a specific role you match well, let me know and I can flag it for our recruiting leads!";
+      }
+      if (isMeetQuery) {
+        return "Absolutely, I'll have my team coordinate a 15-minute sync for next week. Looking forward to discussing developer platforms and how we can support your work further!";
+      }
       if (text.includes("agent") || text.includes("ai") || text.includes("copilot")) {
-        return "Yes, Microsoft Copilot and AI agents are transforming every industry. How are you thinking about deploying them in your work?";
+        return "Yes, Microsoft Copilot and AI agents are transforming every industry. We believe the future of software is agentic, where every developer has a team of autonomous agents assisting them. How are you thinking about deploying them in your work?";
       }
-      if (text.includes("meeting") || text.includes("schedule") || text.includes("meet") || text.includes("sync")) {
-        return "Absolutely, I'll have my team coordinate a 15-minute sync for next week. Looking forward to discussing developer platforms further!";
+      if (isGreeting) {
+        return "Hello! Great to connect with you. Hope you are doing well and building great things. What projects are keeping you busy these days?";
       }
-      if (text.includes("hello") || text.includes("hi") || text.includes("hey")) {
-        return "Hello! Great to connect with you. Hope you are doing well and building great things.";
-      }
-      return "Interesting thoughts. At Microsoft, we believe in empowering every developer and organization to achieve more. Let's keep exploring this.";
+      return "Interesting thoughts. At Microsoft, we believe in employing every developer and organizing to achieve success. Let's keep exploring how we can build a more collaborative and open ecosystem together.";
     }
 
     if (contactName === "Sundar Pichai") {
-      if (text.includes("cloud") || text.includes("google cloud") || text.includes("gcp") || text.includes("integration")) {
-        return "Google Cloud is seeing massive momentum, especially with our Vertex AI and Gemini integrations. Let's sync on your backend setup!";
+      if (isJobQuery) {
+        return "Google is actively hiring across our Google Cloud, Core Systems, and Vertex AI UI teams. If you possess strong skills in React/Next.js and fullstack integration, you would fit right in. Take a look at Google Careers and send me the job ID of any position that catches your eye!";
       }
-      if (text.includes("gemini") || text.includes("ai") || text.includes("model")) {
-        return "Gemini is at the core of Google's future. The multi-modal capabilities are opening up completely new paradigms for web developers.";
+      if (isMeetQuery) {
+        return "I'll have my assistant coordinate a quick Google Meet session next week. Looking forward to discussing Google Cloud integrations and developer API workflows!";
       }
-      if (text.includes("hello") || text.includes("hi") || text.includes("hey")) {
-        return "Hi there! Glad to connect. How has your experience been building on top of Google APIs?";
+      if (text.includes("cloud") || text.includes("gcp") || text.includes("vertex") || text.includes("integration")) {
+        return "Google Cloud GCP and Vertex AI are seeing massive developer adoption. The combination of Gemini models with robust infrastructure allows building very premium user interfaces and agent workflows.";
       }
-      return "Thank you for sharing that. I will pass these insights to the developer relations team. Let's keep in touch!";
+      if (isGreeting) {
+        return "Hi there! Glad to connect. How has your experience been building on top of Google developer platforms and APIs?";
+      }
+      return "Thank you for sharing that perspective. I will pass these insights to our Developer Relations and Product teams. Let's keep in touch!";
     }
 
     if (contactName === "Elon Musk") {
-      if (text.includes("tesla") || text.includes("car") || text.includes("autopilot") || text.includes("fsd")) {
-        return "Tesla FSD and Optimus are solving real-world AI. Next-generation FSD v12 is mind-blowing. Full autonomous transport is coming.";
+      if (isJobQuery) {
+        return "Tesla, SpaceX, and xAI are hiring hardcore engineers. If you write clean, high-performance code and want to solve hard physics or AI alignment problems, send over your GitHub and resume. We don't care about degrees, only exceptional ability.";
       }
-      if (text.includes("spacex") || text.includes("mars") || text.includes("rocket") || text.includes("starship")) {
-        return "Starship is designed to make life multiplanetary. We need to build a self-sustaining city on Mars to preserve the consciousness.";
+      if (isMeetQuery) {
+        return "Very busy with Starship launches and Tesla FSD meetings, but send over your project proposal. If it sounds high-conviction, we can do a brief sync.";
       }
-      if (text.includes("x") || text.includes("twitter") || text.includes("ai") || text.includes("grok")) {
-        return "X is the global real-time town square. Grok will continue to get better rapidly as it trains on real-time data.";
+      if (text.includes("tesla") || text.includes("fsd") || text.includes("autopilot")) {
+        return "Tesla FSD v12 is completely neural-net based. It is solving real-world AI. Real-world physical AI is the hardest and most important problem.";
       }
-      return "Accelerating sustainable energy and engineering is key. What projects are you working on right now?";
+      if (text.includes("spacex") || text.includes("starship") || text.includes("mars")) {
+        return "Starship is crucial for making life multiplanetary. We must build a self-sustaining city on Mars to preserve the light of consciousness.";
+      }
+      if (isGreeting) {
+        return "Hi. What are you building right now? What are the biggest bottlenecks in your tech stack?";
+      }
+      return "Accelerating engineering and clean tech is the priority. Let's make sure we are focused on first-principles thinking.";
     }
 
     if (contactName === "Sam Altman") {
-      if (text.includes("gpt") || text.includes("openai") || text.includes("agi") || text.includes("model")) {
-        return "AGI is coming sooner than most think, and we want to ensure it benefits all of humanity. What features are you building with GPT-4o?";
+      if (isJobQuery) {
+        return "OpenAI is growing extremely fast. We have openings across our ML Platform, API Infrastructure, and Product Engineering teams. We pay top market rates and work on the most important technology of our time. Send me your details, and I will route them to our hiring team.";
       }
-      if (text.includes("api") || text.includes("cost") || text.includes("token") || text.includes("pricing")) {
-        return "We are actively driving API costs down and increasing speed. Expect massive improvements in cost-efficiency this year.";
+      if (isMeetQuery) {
+        return "I'd love to sync. Let's set up a quick Zoom next Tuesday afternoon. I'll have my team send over a calendar invite.";
       }
-      return "The speed of AI progress is exponential. Let me know if you need enterprise credits to scale your startup or projects.";
+      if (text.includes("gpt") || text.includes("openai") || text.includes("agi")) {
+        return "AGI is coming sooner than most think, and we want to ensure it benefits all of humanity. What features are you building with the new GPT-4o API?";
+      }
+      if (isGreeting) {
+        return "Hey! Great to connect. What are you building with generative AI? Let me know if you need developer platform credits to scale up.";
+      }
+      return "The rate of AI progress is exponential. It's an incredible time to be a developer. Let's keep collaborating.";
     }
 
     if (contactName === "Jensen Huang") {
-      if (text.includes("gpu") || text.includes("nvidia") || text.includes("chip") || text.includes("blackwell")) {
-        return "NVIDIA is no longer just a chip company; we are an AI factory. Blackwell is the engine of the next industrial revolution.";
+      if (isJobQuery) {
+        return "At NVIDIA, we are hiring system software engineers, CUDA developers, and deep learning platform engineers. If you understand accelerated computing, computer architecture, and distributed training pipelines, there's no better place to work.";
       }
-      if (text.includes("cuda") || text.includes("software") || text.includes("developer")) {
-        return "CUDA is the bedrock of accelerated computing. It has taken 20 years of dedication to build this ecosystem.";
+      if (isMeetQuery) {
+        return "I'd love to chat. Let's sync next week. I'll have my assistant set up a meeting to discuss GPU workloads and optimization.";
       }
-      return "Remember, the more you buy, the more you save! Accelerated computing is the only sustainable path forward.";
+      if (text.includes("gpu") || text.includes("nvidia") || text.includes("blackwell") || text.includes("cuda")) {
+        return "NVIDIA is no longer just a chip company; we are an AI factory. Blackwell is the engine of the next industrial revolution. Remember, the more you buy, the more you save!";
+      }
+      if (isGreeting) {
+        return "Hello! Welcome to the accelerated computing revolution. What kind of AI models are you training or running inference on?";
+      }
+      return "Accelerated computing is the only sustainable path forward for IT. Let's keep optimizing.";
     }
 
     if (contactName === "Mark Zuckerberg") {
-      if (text.includes("llama") || text.includes("open source") || text.includes("meta")) {
-        return "Open-source AI is the best path forward. Llama 3 is pushing the frontier of open weights, and we're committed to keeping it open.";
+      if (isJobQuery) {
+        return "Meta is pushing hard on open-source Llama and spatial computing. We are looking for product engineers who want to build the metaverse and next-generation social apps. Check out Meta Careers and send me your profile info if you find a good fit!";
       }
-      if (text.includes("vr") || text.includes("ar") || text.includes("quest") || text.includes("metaverse")) {
-        return "Quest 3 and Orion AR glasses represent the future of spatial computing. The physical and digital worlds are merging.";
+      if (isMeetQuery) {
+        return "Let's coordinate a brief sync. I'll have my team send over a calendar invite for next week. Looking forward to it!";
       }
-      return "Exciting times ahead. Meta is building tools to help people connect and build community. Glad to have you in the ecosystem.";
+      if (text.includes("llama") || text.includes("open source")) {
+        return "Open-source AI is the best path forward. Llama 3 is pushing the frontier of open weights, and we're committed to keeping it open. It lets developers build with total control.";
+      }
+      if (isGreeting) {
+        return "Hi! Glad to connect. Meta is building tools to help people connect and build community. What technologies are you using to build your apps?";
+      }
+      return "Exciting times ahead. Keep building and pushing the boundaries of what's possible with open technology!";
     }
 
-    // Fallback generic but polite human-like responses for regular connections
-    if (text.includes("hello") || text.includes("hi") || text.includes("hey")) {
+    // Fallback generic but polite responses for regular connections
+    if (isGreeting) {
       return `Hi! Great to connect with you. How are things going on your end?`;
     }
-    if (text.includes("project") || text.includes("work") || text.includes("job") || text.includes("hire") || text.includes("portfolio")) {
-      return `That sounds super interesting! I'd love to hear more about your current project or career goals. Let me know when you'd like to sync.`;
+    if (isJobQuery) {
+      return `Yes, our company is currently hiring! We have open positions for frontend and fullstack developer roles. Feel free to check out our company page or send me your resume, and I will gladly forward it to our recruiting team!`;
+    }
+    if (isMeetQuery) {
+      return `I'd love to sync! Let me check my calendar for next week and send over a few options. Speak soon!`;
     }
     return `Thanks for the message! That makes a lot of sense. Let's stay in touch and coordinate a time to chat further.`;
   };

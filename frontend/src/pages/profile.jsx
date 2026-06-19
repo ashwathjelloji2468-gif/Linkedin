@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Layout from "@/components/Layout";
 import api from "@/config";
-import { updateProfile, uploadAvatarAction } from "@/config/redux/action/authAction";
+import { updateProfile, uploadAvatarAction, uploadBannerAction } from "@/config/redux/action/authAction";
 import { API_BASE_URL } from "@/config";
 
 export default function Profile() {
@@ -37,6 +37,7 @@ export default function Profile() {
   const [draftedSummary, setDraftedSummary] = useState("");
 
   const fileInputRef = useRef(null);
+  const bannerInputRef = useRef(null);
 
   const getInitials = (name) => {
     if (!name) return "?";
@@ -116,6 +117,18 @@ export default function Profile() {
     const formData = new FormData();
     formData.append("profilePic", file);
     dispatch(uploadAvatarAction(formData));
+  };
+
+  const handleBannerClick = () => {
+    bannerInputRef.current?.click();
+  };
+
+  const handleBannerFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const formData = new FormData();
+    formData.append("bannerPic", file);
+    dispatch(uploadBannerAction(formData));
   };
 
   const handleDownloadResume = async () => {
@@ -205,7 +218,27 @@ export default function Profile() {
         {/* Profile Card Header Widget */}
         <div className="bg-white border border-slate-200 rounded-lg overflow-hidden shadow-sm relative">
           {/* Banner */}
-          <div className="h-32 bg-gradient-to-r from-sky-700 to-[#0077b5]"></div>
+          <div
+            onClick={handleBannerClick}
+            className="h-32 bg-gradient-to-r from-sky-700 to-[#0077b5] relative group overflow-hidden cursor-pointer"
+            title="Click to change background banner"
+          >
+            {user?.bannerPicture ? (
+              <img
+                src={`${API_BASE_URL}/uploads/${user.bannerPicture.replace("uploads/", "")}`}
+                alt="profile banner"
+                className="w-full h-full object-cover group-hover:opacity-85 transition-opacity"
+              />
+            ) : (
+              <div className="w-full h-full group-hover:opacity-90 transition-opacity"></div>
+            )}
+            <div className="absolute top-3 right-3 bg-black/50 hover:bg-black/70 rounded-full p-2 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-150 shadow-md">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </div>
+          </div>
 
           {/* Profile details */}
           <div className="px-6 pb-6 relative flex flex-col md:flex-row md:items-end justify-between items-start gap-4">
@@ -232,13 +265,6 @@ export default function Profile() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
               </div>
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleFileChange}
-                accept="image/*"
-                className="hidden"
-              />
             </div>
 
             <div className="mt-16 md:mt-4 md:flex-grow">
@@ -274,6 +300,22 @@ export default function Profile() {
               </button>
             </div>
           </div>
+
+          {/* Hidden inputs relocated outside uploader wrappers */}
+          <input
+            type="file"
+            ref={bannerInputRef}
+            onChange={handleBannerFileChange}
+            className="hidden"
+            accept="image/*"
+          />
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            accept="image/*"
+            className="hidden"
+          />
         </div>
 
         {/* Unique Feature: AI Profile Coach Card */}

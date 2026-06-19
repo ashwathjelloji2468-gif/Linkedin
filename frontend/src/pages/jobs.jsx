@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Layout from "@/components/Layout";
+import api from "@/config";
 import { updateProfile } from "@/config/redux/action/authAction";
 
 export default function Jobs() {
@@ -10,6 +11,24 @@ export default function Jobs() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedJobId, setSelectedJobId] = useState(1);
   const [appliedJobs, setAppliedJobs] = useState([]);
+  const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
+  const [isSubmittingApp, setIsSubmittingApp] = useState(false);
+  const [coverLetter, setCoverLetter] = useState("");
+  const [resumeOption, setResumeOption] = useState("profile");
+
+  // Fetch persistently applied jobs from the database
+  useEffect(() => {
+    const fetchApplied = async () => {
+      try {
+        const response = await api.get("/users/jobs/applied");
+        const ids = response.data.map(app => app.jobId);
+        setAppliedJobs(ids);
+      } catch (error) {
+        console.error("Error fetching applied jobs:", error);
+      }
+    };
+    fetchApplied();
+  }, []);
 
   const mockJobs = [
     {
@@ -453,7 +472,11 @@ export default function Jobs() {
                 {/* Apply Button */}
                 <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-end">
                   <button
-                    onClick={() => handleApply(activeJob.id)}
+                    onClick={() => {
+                      if (!appliedJobs.includes(activeJob.id)) {
+                        setIsApplyModalOpen(true);
+                      }
+                    }}
                     disabled={appliedJobs.includes(activeJob.id)}
                     className={`px-6 py-2 rounded-full font-semibold text-xs transition-all flex items-center gap-1.5 cursor-pointer ${
                       appliedJobs.includes(activeJob.id)
@@ -482,6 +505,144 @@ export default function Jobs() {
           </div>
         </div>
       </div>
+
+      {/* Easy Apply Modal */}
+      {isApplyModalOpen && (
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+          <div className="bg-white w-full max-w-md rounded-xl overflow-hidden shadow-2xl p-6 border border-slate-200 flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200">
+            <div className="flex justify-between items-center mb-4 pb-2 border-b border-slate-100">
+              <h3 className="font-bold text-base text-slate-800 flex items-center gap-1.5">
+                <span>📝</span>
+                <span>Apply to {activeJob.company}</span>
+              </h3>
+              <button
+                onClick={() => setIsApplyModalOpen(false)}
+                className="text-slate-400 hover:bg-slate-100 p-1.5 rounded-full cursor-pointer focus:outline-none"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {isSubmittingApp ? (
+              <div className="flex flex-col items-center justify-center py-10 gap-3">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#0077b5]"></div>
+                <span className="text-sm font-semibold text-slate-600 animate-pulse text-center">Submitting application to {activeJob.company} recruiters...</span>
+                <span className="text-xs text-slate-400">Uploading profile resume and cover letter...</span>
+              </div>
+            ) : (
+              <form
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  setIsSubmittingApp(true);
+                  try {
+                    await api.post("/users/jobs/apply", {
+                      jobId: activeJob.id,
+                      resumeOption,
+                      coverLetter
+                    });
+                    setTimeout(() => {
+                      setIsSubmittingApp(false);
+                      setIsApplyModalOpen(false);
+                      setAppliedJobs([...appliedJobs, activeJob.id]);
+                      setCoverLetter("");
+                    }, 1500);
+                  } catch (error) {
+                    setIsSubmittingApp(false);
+                    alert(error.response?.data?.message || "Failed to submit application");
+                  }
+                }}
+                className="flex flex-col gap-4 overflow-y-auto pr-1"
+              >
+                {/* Contact Info */}
+                <div>
+                  <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Contact Information</h4>
+                  <div className="bg-slate-50 p-3 rounded-lg border border-slate-200 flex flex-col gap-1">
+                    <span className="text-xs font-semibold text-slate-800">{user?.name}</span>
+                    <span className="text-[10px] text-slate-500">{user?.headline || "LinkedIn Member"}</span>
+                    <span className="text-[10px] text-slate-400">{user?.email}</span>
+                  </div>
+                </div>
+
+                {/* Resume selection */}
+                <div>
+                  <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Resume</h4>
+                  <div className="flex flex-col gap-2">
+                    <label className="flex items-center gap-2 text-xs text-slate-700 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="resumeOpt"
+                        checked={resumeOption === "profile"}
+                        onChange={() => setResumeOption("profile")}
+                        className="text-[#0077b5] focus:ring-[#0077b5]"
+                      />
+                      <span>Use Auto-Generated Profile PDF Resume</span>
+                    </label>
+                    <label className="flex items-center gap-2 text-xs text-slate-700 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="resumeOpt"
+                        checked={resumeOption === "upload"}
+                        onChange={() => setResumeOption("upload")}
+                        className="text-[#0077b5] focus:ring-[#0077b5]"
+                      />
+                      <span>Upload Custom PDF file</span>
+                    </label>
+
+                    {resumeOption === "upload" && (
+                      <input
+                        type="file"
+                        required
+                        accept=".pdf,.doc,.docx"
+                        className="mt-1 block w-full text-xs text-slate-500 file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-[10px] file:font-semibold file:bg-sky-50 file:text-[#0077b5] hover:file:bg-sky-100 cursor-pointer"
+                      />
+                    )}
+                  </div>
+                </div>
+
+                {/* Cover Letter */}
+                <div>
+                  <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Cover Letter / Note to Recruiter</label>
+                  <textarea
+                    value={coverLetter}
+                    onChange={(e) => setCoverLetter(e.target.value)}
+                    placeholder="Introduce yourself and explain why you're a great fit for this role..."
+                    className="w-full border border-slate-300 rounded px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-[#0077b5] text-slate-800 resize-none h-24"
+                  />
+                </div>
+
+                {/* Skill Match Status */}
+                <div className="bg-sky-50/50 border border-sky-100 p-3 rounded-lg flex items-center gap-3">
+                  <div className="text-xl font-bold text-[#0077b5]">{matchPercentage}%</div>
+                  <div className="flex flex-col">
+                    <span className="text-xs font-semibold text-slate-700">AI Skill Match Gauge</span>
+                    <span className="text-[10px] text-slate-500">
+                      {matchedSkills.length} of {matchedSkills.length + missingSkills.length} required skills matched.
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex gap-2 justify-end pt-2 border-t border-slate-100 mt-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsApplyModalOpen(false)}
+                    className="px-4 py-1.5 rounded-full text-xs font-semibold text-slate-500 hover:bg-slate-50 border border-slate-200 cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-5 py-1.5 rounded-full text-xs font-semibold text-white bg-[#0077b5] hover:bg-sky-850 cursor-pointer shadow-md"
+                  >
+                    Submit Application
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
     </Layout>
   );
 }

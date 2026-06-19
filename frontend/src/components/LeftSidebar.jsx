@@ -20,7 +20,15 @@ export default function LeftSidebar() {
       {/* Profile Card Widget */}
       <div className="bg-white border border-slate-200 rounded-lg overflow-hidden shadow-sm">
         {/* Banner */}
-        <div className="h-14 bg-gradient-to-r from-sky-700 to-[#0077b5]"></div>
+        <div className="h-14 bg-gradient-to-r from-sky-700 to-[#0077b5] overflow-hidden">
+          {user?.bannerPicture && (
+            <img
+              src={`${API_BASE_URL}/uploads/${user.bannerPicture.replace("uploads/", "")}`}
+              alt="profile banner"
+              className="w-full h-full object-cover"
+            />
+          )}
+        </div>
         
         {/* Profile Info */}
         <div className="px-4 pb-4 flex flex-col items-center border-b border-slate-200 relative">

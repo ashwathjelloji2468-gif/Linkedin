@@ -127,3 +127,19 @@ export const uploadAvatarAction = createAsyncThunk(
     }
   }
 );
+
+export const uploadBannerAction = createAsyncThunk(
+  "auth/uploadBanner",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const response = await api.post('/users/upload-banner', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);

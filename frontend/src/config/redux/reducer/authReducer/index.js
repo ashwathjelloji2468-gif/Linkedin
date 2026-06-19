@@ -7,7 +7,8 @@ import {
   fetchConnections,
   fetchConnectionRequests,
   fetchAllUsersAction,
-  uploadAvatarAction
+  uploadAvatarAction,
+  uploadBannerAction
 } from "../../action/authAction";
 
 const initialState = {
@@ -95,6 +96,11 @@ const authSlice = createSlice({
       .addCase(uploadAvatarAction.fulfilled, (state, action) => {
         if (state.user && action.payload?.profilePicture) {
           state.user.profilePicture = action.payload.profilePicture;
+        }
+      })
+      .addCase(uploadBannerAction.fulfilled, (state, action) => {
+        if (state.user && action.payload?.bannerPicture) {
+          state.user.bannerPicture = action.payload.bannerPicture;
         }
       });
   },

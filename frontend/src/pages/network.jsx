@@ -7,6 +7,7 @@ import {
   fetchAllUsersAction,
   sendConnectionRequestAction,
   acceptConnectionRequestAction,
+  fetchUserProfile,
 } from "@/config/redux/action/authAction";
 import { API_BASE_URL } from "@/config";
 
@@ -26,6 +27,7 @@ export default function Network() {
     dispatch(acceptConnectionRequestAction(requestId)).then(() => {
       dispatch(fetchConnections());
       dispatch(fetchConnectionRequests());
+      dispatch(fetchUserProfile());
     });
   };
 
