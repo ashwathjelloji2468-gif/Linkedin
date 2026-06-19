@@ -7,7 +7,7 @@ const ConnectionSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    receiver: {
+    recipient: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
@@ -24,7 +24,7 @@ const ConnectionSchema = new mongoose.Schema(
 );
 
 // Prevent duplicate connection requests between the same two users
-ConnectionSchema.index({ sender: 1, receiver: 1 }, { unique: true });
+ConnectionSchema.index({ sender: 1, recipient: 1 }, { unique: true });
 
-const Connection = mongoose.model("Connection", ConnectionSchema);
-export default Connection;
+const ConnectionRequest = mongoose.model("ConnectionRequest", ConnectionSchema);
+export default ConnectionRequest;

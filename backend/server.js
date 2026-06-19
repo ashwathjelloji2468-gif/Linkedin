@@ -21,14 +21,21 @@ app.use((req, res, next) => {
 });
 
 // --- MIDDLEWARE ---
-app.use(cors());
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+  })
+);
 // Set a single limit for JSON parsing
 app.use(express.json({ limit: "5mb" })); 
 app.use(express.urlencoded({ extended: true }));
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-// Serve static files
-app.use(express.static("/Users/jashwath/Desktop/PROJECTS/linkedin-clone/backend/uploads"));
+// Serve static files with uploads route prefix
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // --- ROUTES ---
 app.use('/posts', postRoutes);

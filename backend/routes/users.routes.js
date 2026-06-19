@@ -24,13 +24,14 @@ const storage = multer.diskStorage({
     cb(null, "uploads/");
   },
   filename: (req, file, cb) => {
-    cb(null, "file.orginalname/");
+    cb(null, Date.now() + "-" + file.originalname);
   },
 });
 
 const upload = multer({ storage: storage });
 router.post(
   "/upload-picture",
+  protectRoute,
   upload.single("profilePic"),
   uploadProfilePicture,
 );
@@ -42,7 +43,7 @@ router.get("/get_user_and_profile", protectRoute, getUserAndProfile);
 router.put("/update-profile", protectRoute, updateProfileData);
 router.get("/all-users", protectRoute, getAllUsers);
 router.get("/user/download_resume", protectRoute, downloadProfile);
-router.post("/user/send_connection_request",protectRoute, sendConnectionRequest);
+router.post("/user/send_connection_request/:userId", protectRoute, sendConnectionRequest);
 router.get("/requests",protectRoute, getMyConnectionRequests);
 router.get("/connections", protectRoute, whatAreMyConnections);
 router.put("/accept/:requestId", protectRoute, acceptConnectionRequest);

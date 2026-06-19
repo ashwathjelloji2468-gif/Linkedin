@@ -1,5 +1,6 @@
 import User from "../models/users.models.js";
 import Profile from "../models/profile.models.js";
+import ConnectionRequest from "../models/connections.models.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import PDFDocument from "pdfkit";
@@ -128,15 +129,23 @@ export const uploadProfilePicture = async (req, res) => {
     // req.user is populated by protectRoute middleware
     const userId = req.user.id;
 
-    const updatedProfile = await Profile.findOneAndUpdate(
+    // Update User model
+    await User.findByIdAndUpdate(
+      userId,
+      { profilePicture: req.file.filename },
+      { new: true }
+    );
+
+    // Update Profile model
+    await Profile.findOneAndUpdate(
       { userId },
-      { profilePicture: req.file.path },
-      { new: true },
+      { profilePicture: req.file.filename },
+      { new: true }
     );
 
     return res.status(200).json({
       message: "Profile picture updated successfully",
-      profilePicture: updatedProfile.profilePicture,
+      profilePicture: req.file.filename,
     });
   } catch (error) {
     console.error("Upload error:", error.message);
@@ -201,13 +210,19 @@ export const updateProfileData = async (req, res) => {
     // DEBUG: Add this log
     console.log("Incoming request body:", req.body);
 
-    const { name, username, email, profilePicture } = req.body;
+    const { name, username, email, profilePicture, headline, about, location, skills, experience, education } = req.body;
 
     const updateData = {};
     if (name) updateData.name = name;
     if (username) updateData.username = username;
     if (email) updateData.email = email;
-    if (profilePicture) updateData.profilePicture = profilePicture; // Added this
+    if (profilePicture) updateData.profilePicture = profilePicture; 
+    if (headline !== undefined) updateData.headline = headline;
+    if (about !== undefined) updateData.about = about;
+    if (location !== undefined) updateData.location = location;
+    if (skills !== undefined) updateData.skills = skills;
+    if (experience !== undefined) updateData.experience = experience;
+    if (education !== undefined) updateData.education = education;
 
     const updatedUser = await User.findByIdAndUpdate(
       userId,

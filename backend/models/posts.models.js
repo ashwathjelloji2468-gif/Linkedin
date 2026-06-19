@@ -17,6 +17,27 @@ const PostSchema = new mongoose.Schema(
       ref: "User",
       default: [],
     },
+    likesCount: {
+      type: Number,
+      default: 0,
+    },
+    comments: [
+      {
+        userId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+          required: true,
+        },
+        text: {
+          type: String,
+          required: true,
+        },
+        createdAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
     media: {
       type: String, // URL of the image or video
       default: null,
