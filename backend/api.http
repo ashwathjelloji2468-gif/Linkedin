@@ -1,0 +1,47 @@
+ POST http://localhost:9080/register HTTP/1.1
+ Content-Type: application/json
+
+ {
+  "username": "jashwath",
+  "password": "yourPassword123",
+  "email": "jashwath12@example.com",
+  "name": "Jashwath"
+}
+### This is how you call a protected route
+POST http://localhost:9080/login HTTP/1.1
+ Content-Type: application/json
+
+ {
+  "email": "jashwath@example.com",
+  "password": "yourPassword123"
+}
+###
+GET http://localhost:9080/get_user_and_profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTMzNmQ3NjAwZjA0ZDZjZjY4NzQ1ZDQiLCJpYXQiOjE3ODE3NjgxMDQsImV4cCI6MTc4MjAyNzMwNH0.hB1md66RS-o0q5kRcz5lihGiRfYSXgy6-PBpwu5uSvs
+
+### 
+PUT http://localhost:9080/update-profile
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTMzNmQ3NjAwZjA0ZDZjZjY4NzQ1ZDQiLCJpYXQiOjE3ODE3NjgxMDQsImV4cCI6MTc4MjAyNzMwNH0.hB1md66RS-o0q5kRcz5lihGiRfYSXgy6-PBpwu5uSvs
+
+{
+  "name": "Jashwath",
+  "username": "jashwath_dev"
+}
+
+###
+GET http://localhost:9080/all-users 
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTMzNmQ3NjAwZjA0ZDZjZjY4NzQ1ZDQiLCJpYXQiOjE3ODE3NjgxMDQsImV4cCI6MTc4MjAyNzMwNH0.hB1md66RS-o0q5kRcz5lihGiRfYSXgy6-PBpwu5uSvs
+
+###
+PUT http://localhost:9080/update-profile
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTMzNmQ3NjAwZjA0ZDZjZjY4NzQ1ZDQiLCJpYXQiOjE3ODE3NjgxMDQsImV4cCI6MTc4MjAyNzMwNH0.hB1md66RS-o0q5kRcz5lihGiRfYSXgy6-PBpwu5uSvs
+
+{
+  "profilePicture": "user-circles-set_78370-4704.jpg"
+}
+  
+
+
