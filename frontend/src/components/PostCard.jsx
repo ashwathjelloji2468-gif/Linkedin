@@ -118,6 +118,25 @@ export default function PostCard({ post }) {
         {post.body}
       </div>
 
+      {/* Post Media content (Image or Video) */}
+      {post.media && (
+        <div className="mb-3 overflow-hidden border-t border-b border-slate-100 max-h-[450px] flex items-center justify-center bg-slate-50">
+          {post.fileType === "video" ? (
+            <video
+              src={`${API_BASE_URL}/uploads/${post.media.replace("uploads/", "")}`}
+              controls
+              className="w-full max-h-[450px] object-contain"
+            />
+          ) : (
+            <img
+              src={`${API_BASE_URL}/uploads/${post.media.replace("uploads/", "")}`}
+              alt="post media"
+              className="w-full max-h-[450px] object-contain"
+            />
+          )}
+        </div>
+      )}
+
       {/* Stats Counter */}
       <div className="px-4 py-2 border-b border-slate-100 flex items-center justify-between text-xs text-slate-500">
         <div className="flex items-center gap-1 hover:underline cursor-pointer">

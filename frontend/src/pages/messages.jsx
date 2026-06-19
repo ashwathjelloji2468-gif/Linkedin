@@ -30,10 +30,6 @@ export default function Messages() {
           { sender: "contact", text: "Hello! Loved your latest post on AI agents.", time: "10:30 AM" },
           { sender: "me", text: "Thank you Satya! Really excited about the future of tech.", time: "10:32 AM" },
         ],
-        replies: [
-          "Absolutely! Tech is evolving faster than ever. Let's touch base next week.",
-          "Indeed. Keep pushing boundaries!",
-        ],
       },
       {
         _id: "mock2",
@@ -43,9 +39,41 @@ export default function Messages() {
         messages: [
           { sender: "contact", text: "Let's schedule some time to chat about Google Cloud integration.", time: "Yesterday" },
         ],
-        replies: [
-          "I'll have my assistant schedule a meet. Speak soon!",
-          "Great! Looking forward to it.",
+      },
+      {
+        _id: "mock3",
+        name: "Elon Musk",
+        headline: "CEO at Tesla, SpaceX & xAI",
+        profilePicture: "",
+        messages: [
+          { sender: "contact", text: "How is the scaling of your AI models going? We need more compute.", time: "2 days ago" },
+        ],
+      },
+      {
+        _id: "mock4",
+        name: "Sam Altman",
+        headline: "CEO at OpenAI",
+        profilePicture: "",
+        messages: [
+          { sender: "contact", text: "Hey! What are you building with the new GPT-4o API?", time: "3 days ago" },
+        ],
+      },
+      {
+        _id: "mock5",
+        name: "Jensen Huang",
+        headline: "CEO at NVIDIA",
+        profilePicture: "",
+        messages: [
+          { sender: "contact", text: "The Blackwell GPUs are in full production. Let me know if you need allocation.", time: "1 week ago" },
+        ],
+      },
+      {
+        _id: "mock6",
+        name: "Mark Zuckerberg",
+        headline: "CEO at Meta",
+        profilePicture: "",
+        messages: [
+          { sender: "contact", text: "Llama 3 is open source and fully accessible. Let's build something cool.", time: "1 week ago" },
         ],
       },
     ];
@@ -58,10 +86,6 @@ export default function Messages() {
       profilePicture: c.profilePicture,
       messages: [
         { sender: "contact", text: `Hi, thank you for connecting! How are you doing?`, time: "12:00 PM" },
-      ],
-      replies: [
-        "That sounds wonderful! Let's connect soon.",
-        "Glad to hear. Keep in touch!",
       ],
     }));
 
@@ -79,6 +103,88 @@ export default function Messages() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [activeChat?.messages]);
+
+  const generateHumanizedResponse = (contactName, userText) => {
+    const text = userText.toLowerCase();
+    
+    if (contactName === "Satya Nadella") {
+      if (text.includes("agent") || text.includes("ai") || text.includes("copilot")) {
+        return "Yes, Microsoft Copilot and AI agents are transforming every industry. How are you thinking about deploying them in your work?";
+      }
+      if (text.includes("meeting") || text.includes("schedule") || text.includes("meet") || text.includes("sync")) {
+        return "Absolutely, I'll have my team coordinate a 15-minute sync for next week. Looking forward to discussing developer platforms further!";
+      }
+      if (text.includes("hello") || text.includes("hi") || text.includes("hey")) {
+        return "Hello! Great to connect with you. Hope you are doing well and building great things.";
+      }
+      return "Interesting thoughts. At Microsoft, we believe in empowering every developer and organization to achieve more. Let's keep exploring this.";
+    }
+
+    if (contactName === "Sundar Pichai") {
+      if (text.includes("cloud") || text.includes("google cloud") || text.includes("gcp") || text.includes("integration")) {
+        return "Google Cloud is seeing massive momentum, especially with our Vertex AI and Gemini integrations. Let's sync on your backend setup!";
+      }
+      if (text.includes("gemini") || text.includes("ai") || text.includes("model")) {
+        return "Gemini is at the core of Google's future. The multi-modal capabilities are opening up completely new paradigms for web developers.";
+      }
+      if (text.includes("hello") || text.includes("hi") || text.includes("hey")) {
+        return "Hi there! Glad to connect. How has your experience been building on top of Google APIs?";
+      }
+      return "Thank you for sharing that. I will pass these insights to the developer relations team. Let's keep in touch!";
+    }
+
+    if (contactName === "Elon Musk") {
+      if (text.includes("tesla") || text.includes("car") || text.includes("autopilot") || text.includes("fsd")) {
+        return "Tesla FSD and Optimus are solving real-world AI. Next-generation FSD v12 is mind-blowing. Full autonomous transport is coming.";
+      }
+      if (text.includes("spacex") || text.includes("mars") || text.includes("rocket") || text.includes("starship")) {
+        return "Starship is designed to make life multiplanetary. We need to build a self-sustaining city on Mars to preserve the consciousness.";
+      }
+      if (text.includes("x") || text.includes("twitter") || text.includes("ai") || text.includes("grok")) {
+        return "X is the global real-time town square. Grok will continue to get better rapidly as it trains on real-time data.";
+      }
+      return "Accelerating sustainable energy and engineering is key. What projects are you working on right now?";
+    }
+
+    if (contactName === "Sam Altman") {
+      if (text.includes("gpt") || text.includes("openai") || text.includes("agi") || text.includes("model")) {
+        return "AGI is coming sooner than most think, and we want to ensure it benefits all of humanity. What features are you building with GPT-4o?";
+      }
+      if (text.includes("api") || text.includes("cost") || text.includes("token") || text.includes("pricing")) {
+        return "We are actively driving API costs down and increasing speed. Expect massive improvements in cost-efficiency this year.";
+      }
+      return "The speed of AI progress is exponential. Let me know if you need enterprise credits to scale your startup or projects.";
+    }
+
+    if (contactName === "Jensen Huang") {
+      if (text.includes("gpu") || text.includes("nvidia") || text.includes("chip") || text.includes("blackwell")) {
+        return "NVIDIA is no longer just a chip company; we are an AI factory. Blackwell is the engine of the next industrial revolution.";
+      }
+      if (text.includes("cuda") || text.includes("software") || text.includes("developer")) {
+        return "CUDA is the bedrock of accelerated computing. It has taken 20 years of dedication to build this ecosystem.";
+      }
+      return "Remember, the more you buy, the more you save! Accelerated computing is the only sustainable path forward.";
+    }
+
+    if (contactName === "Mark Zuckerberg") {
+      if (text.includes("llama") || text.includes("open source") || text.includes("meta")) {
+        return "Open-source AI is the best path forward. Llama 3 is pushing the frontier of open weights, and we're committed to keeping it open.";
+      }
+      if (text.includes("vr") || text.includes("ar") || text.includes("quest") || text.includes("metaverse")) {
+        return "Quest 3 and Orion AR glasses represent the future of spatial computing. The physical and digital worlds are merging.";
+      }
+      return "Exciting times ahead. Meta is building tools to help people connect and build community. Glad to have you in the ecosystem.";
+    }
+
+    // Fallback generic but polite human-like responses for regular connections
+    if (text.includes("hello") || text.includes("hi") || text.includes("hey")) {
+      return `Hi! Great to connect with you. How are things going on your end?`;
+    }
+    if (text.includes("project") || text.includes("work") || text.includes("job") || text.includes("hire") || text.includes("portfolio")) {
+      return `That sounds super interesting! I'd love to hear more about your current project or career goals. Let me know when you'd like to sync.`;
+    }
+    return `Thanks for the message! That makes a lot of sense. Let's stay in touch and coordinate a time to chat further.`;
+  };
 
   const handleSendMessage = (e) => {
     e.preventDefault();
@@ -104,11 +210,9 @@ export default function Messages() {
     setChats(updatedChats);
     setTypedMessage("");
 
-    // Simulate dummy reply
+    // Simulate smart context-aware reply
     setTimeout(() => {
-      const replyText =
-        activeChat.replies?.[Math.floor(Math.random() * activeChat.replies.length)] ||
-        "Sounds good, let's keep in touch!";
+      const replyText = generateHumanizedResponse(activeChat.name, newMessage.text);
       
       const replyMessage = {
         sender: "contact",

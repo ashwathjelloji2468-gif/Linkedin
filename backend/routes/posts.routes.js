@@ -10,13 +10,13 @@ const storage = multer.diskStorage({
     cb(null, "uploads/");
   },
   filename: (req, file, cb) => {
-    cb(null, file.originalname);
+    cb(null, Date.now() + "-" + file.originalname);
   },
 });
 const upload = multer({ storage: storage });
 
 router.route("/", activeCheck);
-router.post('/create', upload.none(), createPost);
+router.post('/create', protectRoute, upload.single("media"), createPost);
 router.get("/", protectRoute, getAllPosts);
 router.delete("/delete/:postId", protectRoute, deletePost);
 router.post("/comment/:postId", protectRoute, commentPost);

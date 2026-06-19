@@ -52,32 +52,36 @@ export const activeCheck = async (req, res) => {
 //1. createn post:
 export const createPost = async (req, res) => {
   try {
-    // 1. Extract 'body' from the request
-    const { body } = req.body;
-    
-    // 2. Fallback userId for testing
-    const userId = req.user ? req.user.id : "64b0f9a2b8e3a2c4e8d1a1b1";
-
-    // 3. Validation: Check if 'body' exists
-    if (!body) {
-      return res.status(400).json({ message: "Post content (body) is required" });
-    }
+    const { body, fileType } = req.body;
+    const userId = req.user ? req.user.id : null;
 
     if (!userId) {
       return res.status(401).json({ message: "Unauthorized: User not found" });
     }
 
-    // 4. Create new post using the 'body' field
-    const newPost = new Post({
-      userId,
-      body, 
-    });
+    if (!body) {
+      return res.status(400).json({ message: "Post content (body) is required" });
+    }
 
+    const postData = {
+      userId,
+      body,
+    };
+
+    if (req.file) {
+      postData.media = req.file.filename;
+      postData.fileType = fileType || (req.file.mimetype.startsWith("video/") ? "video" : "image");
+    }
+
+    const newPost = new Post(postData);
     await newPost.save();
+
+    // Populate user info so the frontend can render it immediately without reload
+    const populatedPost = await Post.findById(newPost._id).populate("userId", "name username profilePicture headline");
 
     return res.status(201).json({
       message: "Post created successfully",
-      post: newPost,
+      post: populatedPost,
     });
   } catch (error) {
     console.error("Create post error:", error.message);

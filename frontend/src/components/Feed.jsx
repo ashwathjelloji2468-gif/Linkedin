@@ -12,8 +12,8 @@ export default function Feed() {
     dispatch(fetchPosts());
   }, [dispatch]);
 
-  const handlePostSubmit = (text) => {
-    dispatch(createPost({ body: text }));
+  const handlePostSubmit = (postData) => {
+    dispatch(createPost(postData));
   };
 
   return (

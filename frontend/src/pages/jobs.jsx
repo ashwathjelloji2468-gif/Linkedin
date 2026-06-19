@@ -40,7 +40,7 @@ export default function Jobs() {
       description:
         "Join our engineering team to build payment infrastructure for the internet. You will work on full-stack systems, managing database schemas, core routing, and crafting sleek dashboard user interfaces.",
       requirements: [
-        "4+ years of backend development (NodeJS, Express, MongoDB/SQL)",
+        "4+ years of backend development (Node.js, Express, MongoDB)",
         "Strong React frontend skills",
         "Passion for developer tooling and APIs",
       ],
@@ -63,6 +63,159 @@ export default function Jobs() {
       ],
       salary: "$130,000 - $165,000/year",
     },
+    {
+      id: 4,
+      title: "Senior AI Research Engineer",
+      company: "Meta",
+      location: "Menlo Park, CA (Hybrid)",
+      posted: "2 days ago",
+      logoBg: "bg-blue-100 text-blue-600 font-bold",
+      logoText: "M",
+      description:
+        "Join our FAIR (Fundamental AI Research) team to train next-generation large language models. You will design neural architectures, scale training pipelines, and optimize model inference latency.",
+      requirements: [
+        "Mastery in Python and PyTorch",
+        "Strong understanding of deep learning and Transformers",
+        "Experience with Docker, Kubernetes, and distributed GPU training",
+      ],
+      salary: "$210,000 - $280,000/year",
+    },
+    {
+      id: 5,
+      title: "Cloud DevOps Architect",
+      company: "Netflix",
+      location: "Los Gatos, CA (Hybrid)",
+      posted: "4 days ago",
+      logoBg: "bg-red-100 text-red-700 font-bold",
+      logoText: "N",
+      description:
+        "Scale the delivery of entertainment to hundreds of millions of screens worldwide. You will maintain cloud infrastructure, design resilient CI/CD pipelines, and manage our multi-region AWS deployments.",
+      requirements: [
+        "Expertise with AWS cloud architectures",
+        "Strong infrastructure-as-code scripting (Terraform or CloudFormation)",
+        "Deep knowledge of Docker, Kubernetes, and Linux internals",
+      ],
+      salary: "$180,000 - $240,000/year",
+    },
+    {
+      id: 6,
+      title: "UI/UX Engineer",
+      company: "Airbnb",
+      location: "San Francisco, CA (Hybrid)",
+      posted: "5 days ago",
+      logoBg: "bg-rose-100 text-rose-500 font-bold",
+      logoText: "A",
+      description:
+        "Bridge the gap between design and engineering. You will collaborate with Figma designers to prototype features, create dynamic micro-animations, and implement our design system.",
+      requirements: [
+        "Advanced Figma prototyping and Design Systems experience",
+        "Expert in React, TypeScript, and CSS/animations",
+        "High attention to visual detail and user experience",
+      ],
+      salary: "$135,000 - $175,000/year",
+    },
+    {
+      id: 7,
+      title: "Senior Backend Engineer",
+      company: "Amazon",
+      location: "Seattle, WA (Hybrid)",
+      posted: "6 days ago",
+      logoBg: "bg-orange-100 text-orange-600 font-bold",
+      logoText: "A",
+      description:
+        "Build highly scalable distributed systems powering retail checkout pipelines. You will design robust microservices, optimize database queries, and author clean, reliable Go codebase.",
+      requirements: [
+        "5+ years of backend development (Go, Java, or C++)",
+        "Deep knowledge of System Design, concurrency, and REST APIs",
+        "Experience with SQL and MongoDB databases",
+      ],
+      salary: "$165,000 - $215,000/year",
+    },
+    {
+      id: 8,
+      title: "Mobile Software Engineer",
+      company: "Spotify",
+      location: "New York, NY (Remote)",
+      posted: "1 week ago",
+      logoBg: "bg-emerald-100 text-emerald-600 font-bold",
+      logoText: "S",
+      description:
+        "Deliver premium audio experiences to mobile apps. You will build music streaming features using React Native and optimize local storage and audio buffering algorithms.",
+      requirements: [
+        "3+ years building mobile apps with React Native or Swift/Kotlin",
+        "Solid foundation in TypeScript and mobile state management (Redux)",
+        "Experience collaborating with Git workflow",
+      ],
+      salary: "$130,005 - $170,000/year",
+    },
+    {
+      id: 9,
+      title: "ML Platform Engineer",
+      company: "OpenAI",
+      location: "San Francisco, CA (Hybrid)",
+      posted: "3 days ago",
+      logoBg: "bg-slate-900 text-white font-bold",
+      logoText: "O",
+      description:
+        "Help build the platform that runs the world's most advanced AI models. You will develop backend APIs, deploy models using Docker, and manage cloud compute clusters.",
+      requirements: [
+        "Deep knowledge of Python, APIs, and microservices",
+        "Strong DevOps background (Docker, Kubernetes, AWS)",
+        "Passion for Artificial Intelligence and model serving",
+      ],
+      salary: "$230,000 - $310,000/year",
+    },
+    {
+      id: 10,
+      title: "Senior Solutions Engineer",
+      company: "Slack",
+      location: "Denver, CO (Remote)",
+      posted: "1 week ago",
+      logoBg: "bg-purple-100 text-purple-650 font-bold",
+      logoText: "S",
+      description:
+        "Partner with enterprise customers to design and build custom workspace workflows. You will build APIs integrations, write Node.js microservices, and speak with customer engineering teams.",
+      requirements: [
+        "Strong development experience in Node.js and REST APIs",
+        "Familiarity with Slack API or platform ecosystems",
+        "Excellent communication, public speaking, and customer presentation skills",
+      ],
+      salary: "$140,000 - $175,000/year",
+    },
+    {
+      id: 11,
+      title: "Technical Product Manager",
+      company: "Microsoft",
+      location: "Redmond, WA (Hybrid)",
+      posted: "2 weeks ago",
+      logoBg: "bg-blue-50 text-blue-700 font-bold",
+      logoText: "M",
+      description:
+        "Define the roadmap for our developer cloud developer platform. You will analyze developer requirements, write technical specifications, and work with SQL data pipelines.",
+      requirements: [
+        "Background in engineering or Computer Science",
+        "Familiarity with SQL, AWS/Azure, and System Design concepts",
+        "Excellent product management and communication skills",
+      ],
+      salary: "$150,000 - $190,000/year",
+    },
+    {
+      id: 12,
+      title: "Site Reliability Engineer",
+      company: "Datadog",
+      location: "Boston, MA (Hybrid)",
+      posted: "1 week ago",
+      logoBg: "bg-purple-100 text-purple-800 font-bold",
+      logoText: "D",
+      description:
+        "Ensure the reliability and uptime of our large-scale monitoring platforms. You will troubleshoot network issues, automate infrastructure setup, and manage cloud operations.",
+      requirements: [
+        "Expertise in Go, Python, or shell scripting",
+        "Hands-on experience with AWS, Docker, and Kubernetes",
+        "Passion for observability, metrics, and incident resolution",
+      ],
+      salary: "$145,000 - $185,000/year",
+    },
   ];
 
   const handleApply = (jobId) => {
@@ -75,13 +228,23 @@ export default function Jobs() {
 
     // Technologies to scan for in description & requirements
     const techKeywords = [
-      "React", "Next.js", "TypeScript", "Tailwind CSS", "Tailwind", "CSS", 
-      "NodeJS", "Node.js", "Express", "MongoDB", "SQL", "APIs", "REST APIs", 
-      "Public speaking", "communication"
+      "React Native", "React", "Next.js", "TypeScript", "Tailwind CSS", "Redux", "GraphQL", "Figma",
+      "Node.js", "NodeJS", "Express", "MongoDB", "Python", "PyTorch", "Go",
+      "Docker", "Kubernetes", "AWS", "Git", "DevOps", "System Design", "UI/UX", "Data Science", "Security",
+      "SQL", "APIs", "REST APIs", "Public speaking", "communication"
     ];
 
     const jobText = (job.title + " " + job.description + " " + job.requirements.join(" ")).toLowerCase();
-    const requiredTech = techKeywords.filter(tech => jobText.includes(tech.toLowerCase()));
+    
+    // Scan for matched keywords
+    let requiredTech = techKeywords.filter(tech => jobText.includes(tech.toLowerCase()));
+
+    // Deduplicate substrings (e.g. if we match "Tailwind CSS", filter out "Tailwind" to avoid duplicates)
+    requiredTech = requiredTech.filter((tech, index) => {
+      return !requiredTech.some((otherTech, otherIndex) => 
+        otherIndex !== index && otherTech.toLowerCase().includes(tech.toLowerCase()) && otherTech.toLowerCase() !== tech.toLowerCase()
+      );
+    });
 
     if (requiredTech.length === 0) return { matchPercentage: 100, matchedSkills: [], missingSkills: [] };
 
@@ -104,8 +267,13 @@ export default function Jobs() {
 
   const handleAddMissingSkills = (missing) => {
     if (!missing || missing.length === 0) return;
-    const updatedSkills = [...(user.skills || []), ...missing];
-    dispatch(updateProfile({ skills: updatedSkills }));
+    const currentSkills = user?.skills || [];
+    const newSkills = missing.filter(
+      (skill) => !currentSkills.some((us) => us.toLowerCase() === skill.toLowerCase())
+    );
+    if (newSkills.length === 0) return;
+    const uniqueSkills = Array.from(new Set([...currentSkills, ...newSkills]));
+    dispatch(updateProfile({ skills: uniqueSkills }));
   };
 
   const filteredJobs = mockJobs.filter(

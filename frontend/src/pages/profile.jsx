@@ -189,6 +189,15 @@ export default function Profile() {
 
   const recommendations = getRecommendations();
 
+  const defaultSkills = [
+    "React", "Next.js", "TypeScript", "Tailwind CSS", "Node.js", "Express", 
+    "MongoDB", "Python", "Docker", "Kubernetes", "AWS", "Git", "Redux", 
+    "GraphQL", "System Design", "UI/UX"
+  ];
+  const recommendedSkillsList = defaultSkills.filter(
+    (skill) => !user?.skills?.some((us) => us.toLowerCase() === skill.toLowerCase())
+  );
+
   return (
     <Layout>
       <div className="flex flex-col gap-4">
@@ -457,8 +466,28 @@ export default function Profile() {
                 </span>
               ))}
             </div>
-          ) : (
-            <span className="text-xs text-slate-455 text-center py-2 block">No skills added yet.</span>
+          )}
+
+          {recommendedSkillsList.length > 0 && (
+            <div className="mt-4 pt-3 border-t border-slate-100">
+              <span className="text-xs text-slate-500 font-semibold block mb-2">Recommended Skills (Quick Add):</span>
+              <div className="flex flex-wrap gap-1.5">
+                {recommendedSkillsList.map((skill) => (
+                  <button
+                    key={skill}
+                    type="button"
+                    onClick={() => {
+                      const updatedSkills = [...(user?.skills || []), skill];
+                      const uniqueSkills = Array.from(new Set(updatedSkills));
+                      dispatch(updateProfile({ skills: uniqueSkills }));
+                    }}
+                    className="bg-sky-50/50 hover:bg-sky-100 border border-sky-200 text-[#0077b5] text-[10px] px-2.5 py-1 rounded-full cursor-pointer transition-colors duration-150 font-sans"
+                  >
+                    + {skill}
+                  </button>
+                ))}
+              </div>
+            </div>
           )}
         </div>
 
