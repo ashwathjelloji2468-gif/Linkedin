@@ -42,6 +42,19 @@ export default function Layout({ children }) {
     );
   }
 
+  // If not logged in and trying to access a protected page, don't render children (we are redirecting to login)
+  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  if (!token && !isAuthPage) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#f4f2ee]">
+        <div className="flex flex-col items-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#0077b5]"></div>
+          <span className="mt-4 text-sm font-medium text-slate-500 animate-pulse">Redirecting to sign in...</span>
+        </div>
+      </div>
+    );
+  }
+
   // If it's an auth page, render without header/layout
   if (isAuthPage) {
     return <div className="min-h-screen bg-[#f4f2ee]">{children}</div>;

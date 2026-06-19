@@ -29,7 +29,7 @@ export default function Feed() {
         </div>
       ) : error ? (
         <div className="bg-red-50 text-red-600 p-4 rounded-lg text-center text-xs font-medium border border-red-200 shadow-sm">
-          Failed to load posts: {error}
+          Failed to load posts: {typeof error === "object" ? (error.message || "Failed to load posts") : error}
         </div>
       ) : posts.length > 0 ? (
         <div className="flex flex-col gap-2">
