@@ -1012,3 +1012,69 @@ export const getUserById = async (req, res) => {
   }
 };
 
+// 17. Forgot Password - Generate & Return Reset Code
+export const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
+    const user = await User.findOne({ email: email.toLowerCase() });
+    if (!user) {
+      return res.status(404).json({ message: "No account found with this email" });
+    }
+
+    // Generate 6-digit verification code
+    const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiry = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes expiration
+
+    user.resetPasswordCode = resetCode;
+    user.resetPasswordExpires = expiry;
+    await user.save();
+
+    console.log(`[Forgot Password] Reset code for ${email} is: ${resetCode}`);
+
+    return res.status(200).json({
+      message: "Password reset code generated and sent to email",
+      code: resetCode // returned in response for mock/dev simulation ease
+    });
+  } catch (error) {
+    console.error("Forgot password error:", error.message);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+// 18. Reset Password - Verify Code & Save New Password
+export const resetPassword = async (req, res) => {
+  try {
+    const { email, code, newPassword } = req.body;
+    if (!email || !code || !newPassword) {
+      return res.status(400).json({ message: "Email, code, and new password are required" });
+    }
+
+    const user = await User.findOne({
+      email: email.toLowerCase(),
+      resetPasswordCode: code,
+      resetPasswordExpires: { $gt: new Date() }
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: "Invalid or expired verification code" });
+    }
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    user.resetPasswordCode = "";
+    user.resetPasswordExpires = null;
+    await user.save();
+
+    return res.status(200).json({ message: "Password reset successfully! You can now log in." });
+  } catch (error) {
+    console.error("Reset password error:", error.message);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+

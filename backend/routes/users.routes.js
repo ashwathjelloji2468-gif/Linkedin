@@ -22,7 +22,9 @@ import {
   upgradePremium,
   createBusinessCompany,
   createAdCampaign,
-  getUserById
+  getUserById,
+  forgotPassword,
+  resetPassword
 } from "../controllers/users.controllers.js";
 
 const router = Router();
@@ -53,6 +55,8 @@ router.post(
 
 router.post("/register", register);
 router.post("/login", login);
+router.post("/forgot-password", forgotPassword);
+router.post("/reset-password", resetPassword);
 router.post("/user_update", updateUserProfile);
 router.get("/get_user_and_profile", protectRoute, getUserAndProfile);
 router.get("/user/:id", protectRoute, getUserById);
