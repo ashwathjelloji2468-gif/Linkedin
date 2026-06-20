@@ -116,13 +116,13 @@ export default function LeftSidebar() {
             </svg>
             <span>Groups</span>
           </Link>
-          <Link href="#" className="flex items-center gap-2 hover:text-[#0077b5] transition-colors">
+          <Link href="/newsletters" className="flex items-center gap-2 hover:text-[#0077b5] transition-colors">
             <svg className="w-4 h-4 text-slate-500" fill="currentColor" viewBox="0 0 24 24">
               <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
             </svg>
             <span>Newsletters</span>
           </Link>
-          <Link href="#" className="flex items-center gap-2 hover:text-[#0077b5] transition-colors">
+          <Link href="/events" className="flex items-center gap-2 hover:text-[#0077b5] transition-colors">
             <svg className="w-4 h-4 text-slate-500" fill="currentColor" viewBox="0 0 24 24">
               <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10z" />
             </svg>

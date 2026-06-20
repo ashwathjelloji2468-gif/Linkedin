@@ -32,7 +32,7 @@ export default function Messages() {
 
         // Fetch connections to show potential chats
         const connRes = await api.get("/users/connections");
-        const connectionsList = connRes.data?.connections || [];
+        const connectionsList = Array.isArray(connRes.data) ? connRes.data : (connRes.data?.connections || []);
 
         // Map threads
         const mappedChats = activeThreads.map(t => {

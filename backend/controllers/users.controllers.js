@@ -902,6 +902,8 @@ export const updateDiscoverSettings = async (req, res) => {
       fieldToUpdate = "followedNewsletters";
     } else if (type === "page") {
       fieldToUpdate = "followedPages";
+    } else if (type === "event") {
+      fieldToUpdate = "joinedEvents";
     } else {
       return res.status(400).json({ message: "Invalid type" });
     }
@@ -924,7 +926,8 @@ export const updateDiscoverSettings = async (req, res) => {
       message: "Discover settings updated successfully",
       joinedGroups: user.joinedGroups,
       followedNewsletters: user.followedNewsletters,
-      followedPages: user.followedPages
+      followedPages: user.followedPages,
+      joinedEvents: user.joinedEvents
     });
   } catch (error) {
     console.error("Update discover error:", error.message);

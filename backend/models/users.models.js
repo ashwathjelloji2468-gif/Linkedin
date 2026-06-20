@@ -70,6 +70,10 @@ const UserSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
+    joinedEvents: {
+      type: [String],
+      default: [],
+    },
     skills: [String],
     experience: [
       {

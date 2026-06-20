@@ -31,7 +31,7 @@ export default function FloatingMessaging() {
         const activeThreads = threadsRes.data?.threads || [];
 
         const connRes = await api.get("/users/connections");
-        const connectionsList = connRes.data?.connections || [];
+        const connectionsList = Array.isArray(connRes.data) ? connRes.data : (connRes.data?.connections || []);
 
         const mappedChats = activeThreads.map(t => {
           const otherParticipant = t.participants.find(p => p._id !== user?._id && p.id !== user?._id) || {};
