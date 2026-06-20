@@ -132,24 +132,34 @@ export const uploadProfilePicture = async (req, res) => {
 
     // req.user is populated by protectRoute middleware
     const userId = req.user.id;
+    const filePath = req.file.path;
+    const fileBuffer = fs.readFileSync(filePath);
+    const base64Image = `data:${req.file.mimetype};base64,${fileBuffer.toString("base64")}`;
+
+    // Clean up temporary file
+    try {
+      fs.unlinkSync(filePath);
+    } catch (err) {
+      console.error("Failed to delete temporary profile file:", err.message);
+    }
 
     // Update User model
     await User.findByIdAndUpdate(
       userId,
-      { profilePicture: req.file.filename },
+      { profilePicture: base64Image },
       { new: true }
     );
 
     // Update Profile model
     await Profile.findOneAndUpdate(
       { userId },
-      { profilePicture: req.file.filename },
+      { profilePicture: base64Image },
       { new: true }
     );
 
     return res.status(200).json({
       message: "Profile picture updated successfully",
-      profilePicture: req.file.filename,
+      profilePicture: base64Image,
     });
   } catch (error) {
     console.error("Upload error:", error.message);
@@ -165,17 +175,27 @@ export const uploadBannerPicture = async (req, res) => {
     }
 
     const userId = req.user.id;
+    const filePath = req.file.path;
+    const fileBuffer = fs.readFileSync(filePath);
+    const base64Image = `data:${req.file.mimetype};base64,${fileBuffer.toString("base64")}`;
+
+    // Clean up temporary file
+    try {
+      fs.unlinkSync(filePath);
+    } catch (err) {
+      console.error("Failed to delete temporary banner file:", err.message);
+    }
 
     // Update User model
     await User.findByIdAndUpdate(
       userId,
-      { bannerPicture: req.file.filename },
+      { bannerPicture: base64Image },
       { new: true }
     );
 
     return res.status(200).json({
       message: "Banner picture updated successfully",
-      bannerPicture: req.file.filename,
+      bannerPicture: base64Image,
     });
   } catch (error) {
     console.error("Banner upload error:", error.message);
@@ -300,7 +320,8 @@ const __dirname = path.dirname(__filename);
 
 export const downloadProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select("-password");
+    const targetUserId = req.query.userId || req.user.id;
+    const user = await User.findById(targetUserId).select("-password");
     if (!user) return res.status(404).json({ message: "User not found" });
 
     const doc = new PDFDocument({ margin: 50 });
@@ -313,26 +334,31 @@ export const downloadProfile = async (req, res) => {
 
     //9. Pipe the PDF directly to the response
     doc.pipe(res);
-    console.log("User object profilePicture field:", user.profilePicture);
-    const imagePath = path.join(__dirname, "../uploads", user.profilePicture);
-    console.log("Full calculated path:", imagePath);
-    console.log("Does file exist at this path?", fs.existsSync(imagePath));
     // 1. Profile Picture Section
-     if (user.profilePicture) {
-  const imagePath = path.join(__dirname, "../uploads", user.profilePicture);
-  
-  if (fs.existsSync(imagePath)) {
-    try {
-      // Convert .avif to a JPEG buffer in memory
-      const jpegBuffer = await sharp(imagePath).jpeg().toBuffer();
-      
-      // Pass the buffer to PDFKit instead of the file path
-      doc.image(jpegBuffer, { fit: [100, 100], align: 'center' });
-    } catch (err) {
-      console.error("Sharp conversion error:", err.message);
+    if (user.profilePicture) {
+      if (user.profilePicture.startsWith("data:image")) {
+        try {
+          const matches = user.profilePicture.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+          if (matches && matches.length === 3) {
+            const buffer = Buffer.from(matches[2], "base64");
+            const jpegBuffer = await sharp(buffer).jpeg().toBuffer();
+            doc.image(jpegBuffer, { fit: [100, 100], align: 'center' });
+          }
+        } catch (err) {
+          console.error("Base64 Sharp conversion error:", err.message);
+        }
+      } else {
+        const imagePath = path.join(__dirname, "../uploads", user.profilePicture);
+        if (fs.existsSync(imagePath)) {
+          try {
+            const jpegBuffer = await sharp(imagePath).jpeg().toBuffer();
+            doc.image(jpegBuffer, { fit: [100, 100], align: 'center' });
+          } catch (err) {
+            console.error("Sharp conversion error:", err.message);
+          }
+        }
+      }
     }
-  }
-}
 
     // 10. Personal Info Section
     doc.moveDown();
@@ -417,7 +443,7 @@ export const sendConnectionRequest = async (req, res) => {
       return res.status(400).json({ message: "You are already connected" });
     }
 
-    // Check if recipient is a mock tech leader
+    // Check if recipient is a mock tech leader or Aisha Khan
     const isMockUser = [
       "satya@microsoft.mock",
       "sundar@google.mock",
@@ -425,7 +451,7 @@ export const sendConnectionRequest = async (req, res) => {
       "sam@openai.mock",
       "jensen@nvidia.mock",
       "zuck@meta.mock"
-    ].includes(recipient.email);
+    ].includes(recipient.email) || recipient.name?.toLowerCase().includes("aisha khan");
 
     if (isMockUser) {
       // Auto-accept request immediately
@@ -969,6 +995,19 @@ export const createAdCampaign = async (req, res) => {
     });
   } catch (error) {
     console.error("Create ad campaign error:", error.message);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const getUserById = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).select("-password");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    return res.status(200).json({ user });
+  } catch (error) {
+    console.error("Get user by ID error:", error.message);
     return res.status(500).json({ message: "Internal server error" });
   }
 };

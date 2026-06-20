@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import Link from "next/link";
 import Layout from "@/components/Layout";
 import {
   fetchConnections,
@@ -9,7 +10,7 @@ import {
   acceptConnectionRequestAction,
   fetchUserProfile,
 } from "@/config/redux/action/authAction";
-import { API_BASE_URL } from "@/config";
+import { API_BASE_URL, getImageUrl } from "@/config";
 
 export default function Network() {
   const dispatch = useDispatch();
@@ -107,10 +108,13 @@ export default function Network() {
                     key={request._id}
                     className="flex items-center justify-between border-b border-slate-100 pb-3 last:border-b-0 last:pb-0"
                   >
-                    <div className="flex items-center gap-3">
+                    <Link
+                      href={`/profile?id=${request.sender?._id || request.sender?.id}`}
+                      className="flex items-center gap-3 hover:underline cursor-pointer"
+                    >
                       {request.sender?.profilePicture ? (
                         <img
-                          src={`${API_BASE_URL}/uploads/${request.sender.profilePicture.replace("uploads/", "")}`}
+                          src={getImageUrl(request.sender.profilePicture)}
                           alt="avatar"
                           className="w-12 h-12 rounded-full object-cover border border-slate-200"
                         />
@@ -127,7 +131,7 @@ export default function Network() {
                           {request.sender?.headline || "LinkedIn Member"}
                         </div>
                       </div>
-                    </div>
+                    </Link>
                     <button
                       onClick={() => handleAcceptRequest(request._id)}
                       className="px-4 py-1.5 rounded-full text-xs font-semibold text-[#0077b5] border border-[#0077b5] hover:bg-sky-50 transition-all cursor-pointer"
@@ -146,10 +150,14 @@ export default function Network() {
               <h2 className="font-semibold text-sm text-slate-800 mb-3">Your Connections</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {connections.map((c) => (
-                  <div key={c._id || c.id} className="flex items-center gap-3 p-2 bg-slate-50 rounded-lg border border-slate-100">
+                  <Link
+                    key={c._id || c.id}
+                    href={`/profile?id=${c._id || c.id}`}
+                    className="flex items-center gap-3 p-2 bg-slate-50 rounded-lg border border-slate-100 hover:shadow-sm transition-shadow cursor-pointer hover:underline"
+                  >
                     {c.profilePicture ? (
                       <img
-                        src={`${API_BASE_URL}/uploads/${c.profilePicture.replace("uploads/", "")}`}
+                        src={getImageUrl(c.profilePicture)}
                         alt="avatar"
                         className="w-10 h-10 rounded-full object-cover border border-slate-200"
                       />
@@ -158,11 +166,11 @@ export default function Network() {
                         {getInitials(c.name)}
                       </div>
                     )}
-                    <div className="overflow-hidden">
+                    <div className="overflow-hidden text-left">
                       <div className="font-semibold text-xs text-slate-900 truncate">{c.name}</div>
                       <div className="text-[10px] text-slate-500 truncate">{c.headline || "LinkedIn Member"}</div>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             </div>
@@ -181,22 +189,24 @@ export default function Network() {
                       className="border border-slate-200 rounded-lg overflow-hidden flex flex-col items-center p-4 text-center hover:shadow-md transition-shadow duration-150 bg-white"
                     >
                       {/* Avatar */}
-                      {u.profilePicture ? (
-                        <img
-                          src={`${API_BASE_URL}/uploads/${u.profilePicture.replace("uploads/", "")}`}
-                          alt="avatar"
-                          className="w-16 h-16 rounded-full object-cover border border-slate-200"
-                        />
-                      ) : (
-                        <div className="w-16 h-16 rounded-full bg-[#0077b5] text-white flex items-center justify-center font-bold text-lg">
-                          {getInitials(u.name)}
-                        </div>
-                      )}
+                      <Link href={`/profile?id=${uid}`} className="cursor-pointer hover:opacity-80">
+                        {u.profilePicture ? (
+                          <img
+                            src={getImageUrl(u.profilePicture)}
+                            alt="avatar"
+                            className="w-16 h-16 rounded-full object-cover border border-slate-200"
+                          />
+                        ) : (
+                          <div className="w-16 h-16 rounded-full bg-[#0077b5] text-white flex items-center justify-center font-bold text-lg">
+                            {getInitials(u.name)}
+                          </div>
+                        )}
+                      </Link>
 
                       {/* Name & Headline */}
-                      <span className="font-semibold text-sm text-slate-800 mt-3 hover:underline cursor-pointer block truncate w-full">
+                      <Link href={`/profile?id=${uid}`} className="font-semibold text-sm text-slate-800 mt-3 hover:underline cursor-pointer block truncate w-full">
                         {u.name}
-                      </span>
+                      </Link>
                       <span className="text-[10px] text-slate-500 mt-1 h-8 leading-tight line-clamp-2 w-full">
                         {u.headline || "LinkedIn Member"}
                       </span>

@@ -2,6 +2,7 @@ import User from "../models/users.models.js";
 import Profile from "../models/profile.models.js"; 
 import Post from "../models/posts.models.js";
 import bcrypt from "bcrypt";
+import fs from "fs";
 
 export const register = async (req, res) => {
   try {
@@ -69,7 +70,18 @@ export const createPost = async (req, res) => {
     };
 
     if (req.file) {
-      postData.media = req.file.filename;
+      const filePath = req.file.path;
+      const fileBuffer = fs.readFileSync(filePath);
+      const base64Image = `data:${req.file.mimetype};base64,${fileBuffer.toString("base64")}`;
+
+      // Clean up temporary file
+      try {
+        fs.unlinkSync(filePath);
+      } catch (err) {
+        console.error("Failed to delete temporary post media file:", err.message);
+      }
+
+      postData.media = base64Image;
       postData.fileType = fileType || (req.file.mimetype.startsWith("video/") ? "video" : "image");
     }
 
@@ -77,7 +89,9 @@ export const createPost = async (req, res) => {
     await newPost.save();
 
     // Populate user info so the frontend can render it immediately without reload
-    const populatedPost = await Post.findById(newPost._id).populate("userId", "name username profilePicture headline");
+    const populatedPost = await Post.findById(newPost._id)
+      .populate("userId", "name username profilePicture headline")
+      .populate("comments.userId", "name username profilePicture headline");
 
     return res.status(201).json({
       message: "Post created successfully",
@@ -95,7 +109,8 @@ export const getAllPosts = async (req, res) => {
     //    We exclude sensitive fields like 'password'
     const posts = await Post.find()
       .sort({ createdAt: -1 }) // Sort by newest first
-      .populate("userId", "name username profilePicture headline");
+      .populate("userId", "name username profilePicture headline")
+      .populate("comments.userId", "name username profilePicture headline");
 
     // 2. Return the posts
     res.status(200).json(posts);
@@ -156,7 +171,7 @@ export const commentPost = async (req, res) => {
         }
       },
       { new: true } // Returns the document after the update
-    ).populate("comments.userId", "name profilePicture");
+    ).populate("comments.userId", "name username profilePicture headline");
 
     if (!updatedPost) {
       return res.status(404).json({ message: "Post not found" });

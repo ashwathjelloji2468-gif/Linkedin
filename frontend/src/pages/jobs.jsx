@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import Layout from "@/components/Layout";
-import api, { API_BASE_URL } from "@/config";
+import api, { API_BASE_URL, getImageUrl } from "@/config";
 import { updateProfile } from "@/config/redux/action/authAction";
 
 export default function Jobs() {
@@ -511,7 +511,7 @@ export default function Jobs() {
             <div className="h-14 bg-gradient-to-r from-sky-700 to-[#0077b5] overflow-hidden">
               {user?.bannerPicture && (
                 <img
-                  src={`${API_BASE_URL}/uploads/${user.bannerPicture.replace("uploads/", "")}`}
+                  src={getImageUrl(user.bannerPicture)}
                   alt="banner"
                   className="w-full h-full object-cover"
                 />
@@ -522,7 +522,7 @@ export default function Jobs() {
               <div className="w-16 h-16 rounded-full overflow-hidden absolute -top-8 border-2 border-white shadow bg-white flex items-center justify-center">
                 {user?.profilePicture ? (
                   <img
-                    src={`${API_BASE_URL}/uploads/${user.profilePicture.replace("uploads/", "")}`}
+                    src={getImageUrl(user.profilePicture)}
                     alt="avatar"
                     className="w-full h-full object-cover"
                   />

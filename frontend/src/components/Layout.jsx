@@ -13,9 +13,9 @@ export default function Layout({ children }) {
   const isAuthPage = router.pathname === "/login" || router.pathname === "/register";
 
   useEffect(() => {
-    // Attempt to load the user profile if there's a token
+    // Attempt to load the user profile if there's a token or if we only have sparse login user info
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
-    if (token && !user) {
+    if (token && (!user || user.isPremium === undefined)) {
       dispatch(fetchUserProfile());
     }
   }, [dispatch, user]);

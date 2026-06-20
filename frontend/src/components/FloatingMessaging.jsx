@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchConnections } from "@/config/redux/action/authAction";
-import { API_BASE_URL } from "@/config";
+import { API_BASE_URL, getImageUrl } from "@/config";
 import api from "@/config";
 
 export default function FloatingMessaging() {
@@ -305,7 +305,7 @@ export default function FloatingMessaging() {
                       <div className="relative flex-shrink-0">
                         {chat.profilePicture ? (
                           <img
-                            src={`${API_BASE_URL}/uploads/${chat.profilePicture.replace("uploads/", "")}`}
+                            src={getImageUrl(chat.profilePicture)}
                             alt="avatar"
                             className="w-9 h-9 rounded-full object-cover border border-slate-200"
                           />
@@ -403,10 +403,14 @@ function ActiveChatBox({
       >
         <div className="flex items-center gap-2 overflow-hidden mr-2">
           {/* Avatar with Status Dot */}
-          <div className="relative flex-shrink-0">
+          <Link
+            href={`/profile?id=${chat.connectionId}`}
+            onClick={(e) => e.stopPropagation()}
+            className="relative flex-shrink-0 cursor-pointer block hover:opacity-80"
+          >
             {chat.profilePicture ? (
               <img
-                src={`${API_BASE_URL}/uploads/${chat.profilePicture.replace("uploads/", "")}`}
+                src={getImageUrl(chat.profilePicture)}
                 alt="avatar"
                 className="w-6 h-6 rounded-full object-cover border border-slate-200"
               />
@@ -416,12 +420,16 @@ function ActiveChatBox({
               </div>
             )}
             <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-green-600 border border-white"></span>
-          </div>
+          </Link>
 
-          <div className="overflow-hidden">
-            <span className="text-[11px] font-bold text-slate-800 truncate block hover:text-[#0077b5]">
+          <div className="overflow-hidden text-left">
+            <Link
+              href={`/profile?id=${chat.connectionId}`}
+              onClick={(e) => e.stopPropagation()}
+              className="text-[11px] font-bold text-slate-800 truncate block hover:text-[#0077b5] hover:underline cursor-pointer"
+            >
               {chat.name}
-            </span>
+            </Link>
             <span className="text-[9px] text-slate-500 block truncate leading-none mt-0.5">
               {chat.headline}
             </span>

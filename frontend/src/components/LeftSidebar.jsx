@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import Link from "next/link";
-import { API_BASE_URL } from "@/config";
+import { API_BASE_URL, getImageUrl } from "@/config";
 
 export default function LeftSidebar() {
   const { user } = useSelector((state) => state.auth);
@@ -23,7 +23,7 @@ export default function LeftSidebar() {
         <div className="h-14 bg-gradient-to-r from-sky-700 to-[#0077b5] overflow-hidden">
           {user?.bannerPicture && (
             <img
-              src={`${API_BASE_URL}/uploads/${user.bannerPicture.replace("uploads/", "")}`}
+              src={getImageUrl(user.bannerPicture)}
               alt="profile banner"
               className="w-full h-full object-cover"
             />
@@ -36,7 +36,7 @@ export default function LeftSidebar() {
           <div className="w-16 h-16 rounded-full overflow-hidden absolute -top-8 border-2 border-white shadow-sm bg-white flex items-center justify-center">
             {user?.profilePicture ? (
               <img
-                src={`${API_BASE_URL}/uploads/${user.profilePicture.replace("uploads/", "")}`}
+                src={getImageUrl(user.profilePicture)}
                 alt="avatar"
                 className="w-full h-full object-cover"
               />

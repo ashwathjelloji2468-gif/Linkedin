@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import Link from "next/link";
 import { likePost, commentPost, deletePost, deleteComment } from "@/config/redux/action/postAction";
-import { API_BASE_URL } from "@/config";
+import { API_BASE_URL, getImageUrl } from "@/config";
 
 export default function PostCard({ post }) {
   const dispatch = useDispatch();
@@ -27,7 +28,8 @@ export default function PostCard({ post }) {
     setTimeout(() => setToastMessage(""), 2000);
   };
   const author = post.userId || {};
-  const isPostOwner = author._id === currentUserId || author.id === currentUserId;
+  const authorId = typeof author === "string" ? author : (author._id || author.id);
+  const isPostOwner = authorId === currentUserId;
 
   const hasLiked = post.likes?.includes(currentUserId);
 
@@ -83,21 +85,25 @@ export default function PostCard({ post }) {
       {/* Top Header Card */}
       <div className="p-4 flex items-start justify-between">
         <div className="flex gap-3">
-          {author.profilePicture ? (
-            <img
-              src={`${API_BASE_URL}/uploads/${author.profilePicture.replace("uploads/", "")}`}
-              alt="avatar"
-              className="w-12 h-12 rounded-full object-cover border border-slate-200"
-            />
-          ) : (
-            <div className="w-12 h-12 rounded-full bg-[#0077b5] text-white flex items-center justify-center font-bold text-base">
-              {getInitials(author.name)}
-            </div>
-          )}
+          <Link href={`/profile?id=${authorId}`}>
+            {author.profilePicture ? (
+              <img
+                src={getImageUrl(author.profilePicture)}
+                alt="avatar"
+                className="w-12 h-12 rounded-full object-cover border border-slate-200 cursor-pointer"
+              />
+            ) : (
+              <div className="w-12 h-12 rounded-full bg-[#0077b5] text-white flex items-center justify-center font-bold text-base cursor-pointer">
+                {getInitials(author.name)}
+              </div>
+            )}
+          </Link>
           <div>
-            <div className="font-semibold text-slate-800 hover:underline hover:text-[#0077b5] cursor-pointer text-sm">
-              {author.name || "Anonymous User"}
-            </div>
+            <Link href={`/profile?id=${authorId}`}>
+              <div className="font-semibold text-slate-800 hover:underline hover:text-[#0077b5] cursor-pointer text-sm">
+                {author.name || "Anonymous User"}
+              </div>
+            </Link>
             <div className="text-[11px] text-slate-500 leading-normal max-w-[280px] md:max-w-[400px] truncate">
               {author.headline || "LinkedIn Member"}
             </div>
@@ -139,13 +145,13 @@ export default function PostCard({ post }) {
         <div className="mb-3 overflow-hidden border-t border-b border-slate-100 max-h-[450px] flex items-center justify-center bg-slate-50">
           {post.fileType === "video" ? (
             <video
-              src={`${API_BASE_URL}/uploads/${post.media.replace("uploads/", "")}`}
+              src={getImageUrl(post.media)}
               controls
               className="w-full max-h-[450px] object-contain"
             />
           ) : (
             <img
-              src={`${API_BASE_URL}/uploads/${post.media.replace("uploads/", "")}`}
+              src={getImageUrl(post.media)}
               alt="post media"
               className="w-full max-h-[450px] object-contain"
             />
@@ -254,7 +260,7 @@ export default function PostCard({ post }) {
           <form onSubmit={handleCommentSubmit} className="flex gap-2">
             {user?.profilePicture ? (
               <img
-                src={`${API_BASE_URL}/uploads/${user.profilePicture.replace("uploads/", "")}`}
+                src={getImageUrl(user.profilePicture)}
                 alt="avatar"
                 className="w-8 h-8 rounded-full object-cover border border-slate-200"
               />
@@ -287,26 +293,30 @@ export default function PostCard({ post }) {
             {post.comments && post.comments.length > 0 ? (
               post.comments.map((comment) => {
                 const commentAuthor = comment.userId || {};
-                const isCommentOwner =
-                  commentAuthor._id === currentUserId || commentAuthor.id === currentUserId;
+                const commentAuthorId = typeof commentAuthor === "string" ? commentAuthor : (commentAuthor._id || commentAuthor.id);
+                const isCommentOwner = commentAuthorId === currentUserId;
                 return (
                   <div key={comment._id} className="flex gap-2 items-start">
-                    {commentAuthor.profilePicture ? (
-                      <img
-                        src={`${API_BASE_URL}/uploads/${commentAuthor.profilePicture.replace("uploads/", "")}`}
-                        alt="avatar"
-                        className="w-8 h-8 rounded-full object-cover border border-slate-200 mt-1"
-                      />
-                    ) : (
-                      <div className="w-8 h-8 rounded-full bg-[#0077b5] text-white flex items-center justify-center font-bold text-[10px] mt-1">
-                        {getInitials(commentAuthor.name)}
-                      </div>
-                    )}
+                    <Link href={`/profile?id=${commentAuthorId}`}>
+                      {commentAuthor.profilePicture ? (
+                        <img
+                          src={getImageUrl(commentAuthor.profilePicture)}
+                          alt="avatar"
+                          className="w-8 h-8 rounded-full object-cover border border-slate-200 mt-1 cursor-pointer"
+                        />
+                      ) : (
+                        <div className="w-8 h-8 rounded-full bg-[#0077b5] text-white flex items-center justify-center font-bold text-[10px] mt-1 cursor-pointer">
+                          {getInitials(commentAuthor.name)}
+                        </div>
+                      )}
+                    </Link>
                     <div className="flex-grow bg-[#edf3f8] px-3 py-2 rounded-lg relative">
                       <div className="flex items-center justify-between">
-                        <span className="font-semibold text-xs text-slate-800 hover:underline cursor-pointer">
-                          {commentAuthor.name || "Anonymous Member"}
-                        </span>
+                        <Link href={`/profile?id=${commentAuthorId}`}>
+                          <span className="font-semibold text-xs text-slate-800 hover:underline cursor-pointer">
+                            {commentAuthor.name || "Anonymous Member"}
+                          </span>
+                        </Link>
                         {isCommentOwner && (
                           <button
                             onClick={() => handleDeleteComment(comment._id)}

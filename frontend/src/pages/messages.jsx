@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "next/router";
+import Link from "next/link";
 import Layout from "@/components/Layout";
 import { fetchConnections } from "@/config/redux/action/authAction";
-import { API_BASE_URL } from "@/config";
+import { API_BASE_URL, getImageUrl } from "@/config";
 import api from "@/config";
 
 export default function Messages() {
@@ -241,22 +242,32 @@ export default function Messages() {
                       : "hover:bg-slate-50/50"
                   }`}
                 >
-                  {chat.profilePicture ? (
-                    <img
-                      src={`${API_BASE_URL}/uploads/${chat.profilePicture.replace("uploads/", "")}`}
-                      alt="avatar"
-                      className="w-10 h-10 rounded-full object-cover border border-slate-200 mt-0.5"
-                    />
-                  ) : (
-                    <div className="w-10 h-10 rounded-full bg-[#0077b5] text-white flex items-center justify-center font-bold text-xs mt-0.5 flex-shrink-0">
-                      {getInitials(chat.name)}
-                    </div>
-                  )}
-                  <div className="overflow-hidden flex-grow">
+                  <Link
+                    href={`/profile?id=${chat.connectionId}`}
+                    onClick={(e) => e.stopPropagation()}
+                    className="flex-shrink-0 cursor-pointer block hover:opacity-80"
+                  >
+                    {chat.profilePicture ? (
+                      <img
+                        src={getImageUrl(chat.profilePicture)}
+                        alt="avatar"
+                        className="w-10 h-10 rounded-full object-cover border border-slate-200 mt-0.5"
+                      />
+                    ) : (
+                      <div className="w-10 h-10 rounded-full bg-[#0077b5] text-white flex items-center justify-center font-bold text-xs mt-0.5 flex-shrink-0">
+                        {getInitials(chat.name)}
+                      </div>
+                    )}
+                  </Link>
+                  <div className="overflow-hidden flex-grow text-left">
                     <div className="flex justify-between items-center">
-                      <span className="font-semibold text-xs text-slate-900 truncate">
+                      <Link
+                        href={`/profile?id=${chat.connectionId}`}
+                        onClick={(e) => e.stopPropagation()}
+                        className="font-semibold text-xs text-slate-900 truncate hover:underline hover:text-[#0077b5] cursor-pointer"
+                      >
                         {chat.name}
-                      </span>
+                      </Link>
                     </div>
                     <span className="text-[10px] text-slate-500 block truncate">{chat.headline}</span>
                     <span className="text-[10px] text-slate-400 block mt-1 truncate">
@@ -276,22 +287,29 @@ export default function Messages() {
           {activeChat ? (
             <div className="flex flex-col h-full justify-between flex-grow">
               {/* Header */}
-              <div className="p-4 bg-white border-b border-slate-200 flex items-center gap-3 shadow-sm">
-                {activeChat.profilePicture ? (
-                  <img
-                    src={`${API_BASE_URL}/uploads/${activeChat.profilePicture.replace("uploads/", "")}`}
-                    alt="avatar"
-                    className="w-10 h-10 rounded-full object-cover border border-slate-200"
-                  />
-                ) : (
-                  <div className="w-10 h-10 rounded-full bg-[#0077b5] text-white flex items-center justify-center font-bold text-xs">
-                    {getInitials(activeChat.name)}
-                  </div>
-                )}
+              <div className="p-4 bg-white border-b border-slate-200 flex items-center gap-3 shadow-sm text-left">
+                <Link
+                  href={`/profile?id=${activeChat.connectionId}`}
+                  className="flex-shrink-0 cursor-pointer hover:opacity-80 block"
+                >
+                  {activeChat.profilePicture ? (
+                    <img
+                      src={getImageUrl(activeChat.profilePicture)}
+                      alt="avatar"
+                      className="w-10 h-10 rounded-full object-cover border border-slate-200"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-[#0077b5] text-white flex items-center justify-center font-bold text-xs">
+                      {getInitials(activeChat.name)}
+                    </div>
+                  )}
+                </Link>
                 <div>
-                  <h3 className="font-semibold text-xs text-slate-900 hover:underline cursor-pointer">
-                    {activeChat.name}
-                  </h3>
+                  <Link href={`/profile?id=${activeChat.connectionId}`}>
+                    <h3 className="font-semibold text-xs text-slate-900 hover:underline cursor-pointer">
+                      {activeChat.name}
+                    </h3>
+                  </Link>
                   <span className="text-[10px] text-slate-500 block leading-snug">{activeChat.headline}</span>
                 </div>
               </div>

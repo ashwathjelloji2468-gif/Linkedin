@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { API_BASE_URL } from "@/config";
+import { API_BASE_URL, getImageUrl } from "@/config";
 
 export default function PostComposer({ onPost }) {
   const { user } = useSelector((state) => state.auth);
@@ -145,7 +145,7 @@ export default function PostComposer({ onPost }) {
       <div className="flex items-center gap-3">
         {user?.profilePicture ? (
           <img
-            src={`${API_BASE_URL}/uploads/${user.profilePicture.replace("uploads/", "")}`}
+            src={getImageUrl(user.profilePicture)}
             alt="avatar"
             className="w-11 h-11 rounded-full object-cover border border-slate-200"
           />
@@ -227,7 +227,7 @@ export default function PostComposer({ onPost }) {
             <div className="px-6 py-4 flex items-center gap-3">
               {user?.profilePicture ? (
                 <img
-                  src={`${API_BASE_URL}/uploads/${user.profilePicture.replace("uploads/", "")}`}
+                  src={getImageUrl(user.profilePicture)}
                   alt="avatar"
                   className="w-12 h-12 rounded-full object-cover border border-slate-200"
                 />

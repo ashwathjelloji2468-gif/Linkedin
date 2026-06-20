@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { logout } from "@/config/redux/reducer/authReducer";
-import { API_BASE_URL } from "@/config";
+import { API_BASE_URL, getImageUrl } from "@/config";
 import api from "@/config";
 
 export default function Header() {
@@ -197,10 +197,14 @@ export default function Header() {
                         const isConnected = user?.connections?.includes(u._id) || user?.connections?.includes(u.id);
                         return (
                           <div key={u._id} className="flex items-center justify-between gap-3 hover:bg-slate-55 p-1.5 rounded transition-all">
-                            <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                            <Link
+                              href={`/profile?id=${u._id || u.id}`}
+                              className="flex items-center gap-2.5 min-w-0 flex-1 hover:underline cursor-pointer"
+                              onClick={() => setShowDropdown(false)}
+                            >
                               {u.profilePicture ? (
                                 <img
-                                  src={`${API_BASE_URL}/uploads/${u.profilePicture.replace("uploads/", "")}`}
+                                  src={getImageUrl(u.profilePicture)}
                                   alt={u.name}
                                   className="w-8 h-8 rounded-full object-cover border border-slate-100"
                                 />
@@ -213,7 +217,7 @@ export default function Header() {
                                 <span className="font-bold text-xs text-slate-800 block leading-tight">{u.name}</span>
                                 <span className="text-[10px] text-slate-500 block truncate mt-0.5">{u.headline}</span>
                               </div>
-                            </div>
+                            </Link>
                             <button
                               onClick={async () => {
                                 if (isConnected) {
@@ -369,7 +373,7 @@ export default function Header() {
             >
               {user?.profilePicture ? (
                 <img
-                  src={`${API_BASE_URL}/uploads/${user.profilePicture.replace("uploads/", "")}`}
+                  src={getImageUrl(user.profilePicture)}
                   alt="avatar"
                   className="w-6 h-6 rounded-full object-cover border border-slate-200"
                   onError={(e) => {
@@ -395,7 +399,7 @@ export default function Header() {
                 <div className="px-4 pb-3 border-b border-slate-100 flex items-center gap-3">
                   {user?.profilePicture ? (
                     <img
-                      src={`${API_BASE_URL}/uploads/${user.profilePicture.replace("uploads/", "")}`}
+                      src={getImageUrl(user.profilePicture)}
                       alt="avatar"
                       className="w-12 h-12 rounded-full object-cover border border-slate-200"
                     />
@@ -482,10 +486,14 @@ export default function Header() {
             </div>
 
             <div className="overflow-y-auto flex-grow flex flex-col gap-4 pr-1">
-              <div className="flex gap-2.5 items-start">
+              <Link
+                href={`/profile?id=${typeof selectedPost.userId === "string" ? selectedPost.userId : (selectedPost.userId?._id || selectedPost.userId?.id)}`}
+                onClick={() => setSelectedPost(null)}
+                className="flex gap-2.5 items-start cursor-pointer hover:underline"
+              >
                 {selectedPost.userId?.profilePicture ? (
                   <img
-                    src={`${API_BASE_URL}/uploads/${selectedPost.userId.profilePicture.replace("uploads/", "")}`}
+                    src={getImageUrl(selectedPost.userId.profilePicture)}
                     alt="avatar"
                     className="w-10 h-10 rounded-full object-cover border border-slate-200"
                   />
@@ -499,7 +507,7 @@ export default function Header() {
                   <span className="text-[10px] text-slate-500 block leading-snug mt-0.5">{selectedPost.userId?.headline}</span>
                   <span className="text-[9px] text-slate-400 block mt-0.5">{new Date(selectedPost.createdAt).toLocaleString()}</span>
                 </div>
-              </div>
+              </Link>
 
               <div className="text-xs text-slate-800 leading-relaxed whitespace-pre-wrap font-medium">
                 {selectedPost.body}
@@ -508,7 +516,7 @@ export default function Header() {
               {selectedPost.media && (
                 <div className="rounded-lg overflow-hidden border border-slate-100 bg-slate-50">
                   <img
-                    src={`${API_BASE_URL}/uploads/${selectedPost.media.replace("uploads/", "")}`}
+                    src={getImageUrl(selectedPost.media)}
                     alt="post media"
                     className="max-h-[300px] w-full object-contain mx-auto"
                   />

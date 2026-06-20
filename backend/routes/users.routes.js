@@ -21,7 +21,8 @@ import {
   updateDiscoverSettings,
   upgradePremium,
   createBusinessCompany,
-  createAdCampaign
+  createAdCampaign,
+  getUserById
 } from "../controllers/users.controllers.js";
 
 const router = Router();
@@ -54,6 +55,7 @@ router.post("/register", register);
 router.post("/login", login);
 router.post("/user_update", updateUserProfile);
 router.get("/get_user_and_profile", protectRoute, getUserAndProfile);
+router.get("/user/:id", protectRoute, getUserById);
 router.put("/update-profile", protectRoute, updateProfileData);
 router.get("/all-users", protectRoute, getAllUsers);
 router.get("/user/download_resume", protectRoute, downloadProfile);

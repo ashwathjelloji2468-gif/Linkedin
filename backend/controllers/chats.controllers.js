@@ -202,6 +202,25 @@ const generateContextualCEOReply = (ceoName, history, userText) => {
     return "Keep building and connecting communities. Let's stay in touch.";
   }
 
+  if (ceoName === "Aisha Khan") {
+    if (isGreeting && turnCount <= 1) {
+      return "Hi! So glad we connected. I saw your post about the Amazon Hackathon in Hyderabad. Are you planning to participate? It sounds really exciting!";
+    }
+    if (text.includes("hackathon") || text.includes("amazon") || text.includes("event") || text.includes("project")) {
+      return "That's awesome! I'm actually building a React/Node.js full-stack project for it. It focuses on optimizing local developer community collaboration. What are you planning to work on?";
+    }
+    if (isMeetQuery || text.includes("collab") || text.includes("work")) {
+      return "Absolutely, I'd love to sync up and share ideas! We can do a quick Google Meet or chat over coffee. Let me know what days work best for you next week!";
+    }
+    if (turnCount === 2) {
+      return "That sounds like a very solid stack and concept. Let's definitely try to build out a working MVP before the deadline. Do you want to team up or do a peer review first?";
+    }
+    if (turnCount >= 3) {
+      return "Perfect! Let's stay in touch here. Send over your GitHub repo link when you push the initial draft and I'll take a look.";
+    }
+    return "Great chatting with you! Let's stay in touch and make sure we perform well at the CBIT tech events.";
+  }
+
   // Fallback default response
   if (isGreeting) return "Hello! Great to connect with you. How are things on your end?";
   if (isJobQuery) return "We have a few open developer roles right now. Check out our careers portal, or send me your resume and I can share it with recruiting!";
@@ -253,7 +272,7 @@ export const sendMessage = async (req, res) => {
 
     // Check if recipient is a mock CEO chatbot
     const recipient = thread.participants.find(p => p._id.toString() !== senderId.toString());
-    const ceos = ["Satya Nadella", "Sundar Pichai", "Elon Musk", "Sam Altman", "Jensen Huang", "Mark Zuckerberg"];
+    const ceos = ["Satya Nadella", "Sundar Pichai", "Elon Musk", "Sam Altman", "Jensen Huang", "Mark Zuckerberg", "Aisha Khan"];
     
     if (recipient && ceos.includes(recipient.name)) {
       // Generate AI Reply

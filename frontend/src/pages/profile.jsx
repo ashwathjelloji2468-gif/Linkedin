@@ -1,18 +1,49 @@
 import { useState, useRef, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useRouter } from "next/router";
 import Layout from "@/components/Layout";
 import api from "@/config";
 import { updateProfile, uploadAvatarAction, uploadBannerAction, fetchUserProfile } from "@/config/redux/action/authAction";
-import { API_BASE_URL } from "@/config";
+import { API_BASE_URL, getImageUrl } from "@/config";
 
 export default function Profile() {
   const dispatch = useDispatch();
+  const router = useRouter();
   const { user } = useSelector((state) => state.auth);
 
-  // Load profile data on mount
+  const { id: queryId } = router.query;
+  const isOwnProfile = !queryId || queryId === user?._id || queryId === user?.id;
+
+  const [viewUser, setViewUser] = useState(null);
+  const [loadingViewUser, setLoadingViewUser] = useState(false);
+
+  // Load own profile data on mount
   useEffect(() => {
     dispatch(fetchUserProfile());
   }, [dispatch]);
+
+  // Synchronize viewUser depending on whether we view our own or someone else's profile
+  useEffect(() => {
+    if (isOwnProfile) {
+      setViewUser(user);
+    } else {
+      const fetchOtherUser = async () => {
+        try {
+          setLoadingViewUser(true);
+          const res = await api.get(`/users/user/${queryId}`);
+          setViewUser(res.data?.user);
+        } catch (err) {
+          console.error("Failed to load other user profile:", err.message);
+          setViewUser(null); // default if error
+        } finally {
+          setLoadingViewUser(false);
+        }
+      };
+      if (queryId) {
+        fetchOtherUser();
+      }
+    }
+  }, [queryId, user, isOwnProfile]);
 
   // Modal display states
   const [isEditInfoOpen, setIsEditInfoOpen] = useState(false);
@@ -21,10 +52,20 @@ export default function Profile() {
   const [showSummaryDraftModal, setShowSummaryDraftModal] = useState(false);
 
   // Form states
-  const [name, setName] = useState(user?.name || "");
-  const [headline, setHeadline] = useState(user?.headline || "");
-  const [about, setAbout] = useState(user?.about || "");
-  const [location, setLocation] = useState(user?.location || "");
+  const [name, setName] = useState("");
+  const [headline, setHeadline] = useState("");
+  const [about, setAbout] = useState("");
+  const [location, setLocation] = useState("");
+
+  // Sync form inputs when viewUser changes
+  useEffect(() => {
+    if (viewUser && isOwnProfile) {
+      setName(viewUser.name || "");
+      setHeadline(viewUser.headline || "");
+      setAbout(viewUser.about || "");
+      setLocation(viewUser.location || "");
+    }
+  }, [viewUser, isOwnProfile]);
 
   const [expTitle, setExpTitle] = useState("");
   const [expCompany, setExpCompany] = useState("");
@@ -220,6 +261,27 @@ export default function Profile() {
     (skill) => !user?.skills?.some((us) => us.toLowerCase() === skill.toLowerCase())
   );
 
+  if (loadingViewUser || (!viewUser && queryId)) {
+    return (
+      <Layout>
+        <div className="bg-white border border-slate-200 rounded-lg p-12 text-center shadow-sm flex flex-col items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#0077b5] mb-2"></div>
+          <span className="text-xs font-bold text-slate-500 animate-pulse">Loading profile...</span>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (!viewUser) {
+    return (
+      <Layout>
+        <div className="bg-white border border-slate-200 rounded-lg p-12 text-center shadow-sm flex flex-col items-center justify-center">
+          <span className="text-xs font-semibold text-slate-500">Profile not found.</span>
+        </div>
+      </Layout>
+    );
+  }
+
   return (
     <Layout>
       <div className="flex flex-col gap-4">
@@ -228,13 +290,13 @@ export default function Profile() {
         <div className="bg-white border border-slate-200 rounded-lg overflow-hidden shadow-sm relative">
           {/* Banner */}
           <div
-            onClick={handleBannerClick}
-            className="h-32 bg-gradient-to-r from-sky-700 to-[#0077b5] relative group overflow-hidden cursor-pointer"
-            title="Click to change background banner"
+            onClick={isOwnProfile ? handleBannerClick : undefined}
+            className={`h-32 bg-gradient-to-r from-sky-700 to-[#0077b5] relative group overflow-hidden ${isOwnProfile ? "cursor-pointer" : "cursor-default"}`}
+            title={isOwnProfile ? "Click to change background banner" : ""}
           >
-            {user?.bannerPicture ? (
+            {viewUser?.bannerPicture ? (
               <img
-                src={`${API_BASE_URL}/uploads/${user.bannerPicture.replace("uploads/", "")}`}
+                src={getImageUrl(viewUser.bannerPicture)}
                 alt="profile banner"
                 className="w-full h-full object-cover group-hover:opacity-85 transition-opacity"
               />
@@ -242,12 +304,14 @@ export default function Profile() {
               <div className="w-full h-full group-hover:opacity-90 transition-opacity"></div>
             )}
             {/* Always-visible Edit cover button */}
-            <div className="absolute bottom-3 right-3 bg-white hover:bg-slate-100 text-[#0077b5] border border-slate-200 rounded-full p-2 flex items-center justify-center shadow-md transition-all z-20">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-            </div>
+            {isOwnProfile && (
+              <div className="absolute bottom-3 right-3 bg-white hover:bg-slate-100 text-[#0077b5] border border-slate-200 rounded-full p-2 flex items-center justify-center shadow-md transition-all z-20">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </div>
+            )}
           </div>
 
           {/* Profile details */}
@@ -255,60 +319,103 @@ export default function Profile() {
             
             {/* Avatar uploader wrapper - sized and styled exactly */}
             <div
-              onClick={handleAvatarClick}
-              className="w-32 h-32 rounded-full overflow-hidden absolute left-6 -top-16 border-4 border-white shadow-md bg-white cursor-pointer group flex items-center justify-center z-10"
+              onClick={isOwnProfile ? handleAvatarClick : undefined}
+              className={`w-32 h-32 rounded-full overflow-hidden absolute left-6 -top-16 border-4 border-white shadow-md bg-white flex items-center justify-center z-10 ${isOwnProfile ? "cursor-pointer group" : "cursor-default"}`}
             >
-              {user?.profilePicture ? (
+              {viewUser?.profilePicture ? (
                 <img
-                  src={`${API_BASE_URL}/uploads/${user.profilePicture.replace("uploads/", "")}`}
+                  src={getImageUrl(viewUser.profilePicture)}
                   alt="avatar"
                   className="w-full h-full object-cover group-hover:opacity-80 transition-opacity"
                 />
               ) : (
                 <div className="w-full h-full bg-[#0077b5] text-white flex items-center justify-center font-bold text-3xl group-hover:opacity-80 transition-opacity">
-                  {getInitials(user?.name)}
+                  {getInitials(viewUser?.name)}
                 </div>
               )}
-              <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-150">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-              </div>
+              {isOwnProfile && (
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                </div>
+              )}
             </div>
 
             {/* details text container - pl-0 on mobile, pl-36 on desktop to clear absolute avatar */}
             <div className="mt-16 md:mt-4 md:pl-36 md:flex-grow text-left">
-              <h1 className="text-xl font-bold text-slate-900">{user?.name}</h1>
-              <span className="text-sm text-slate-650 block mt-0.5">{user?.headline || "Add a professional headline"}</span>
-              <span className="text-xs text-slate-400 block mt-1">{user?.location || "Location not set"}</span>
+              <h1 className="text-xl font-bold text-slate-900">{viewUser?.name}</h1>
+              <span className="text-sm text-slate-650 block mt-0.5">{viewUser?.headline || "Add a professional headline"}</span>
+              <span className="text-xs text-slate-400 block mt-1">{viewUser?.location || "Location not set"}</span>
               <span className="text-xs font-semibold text-[#0077b5] hover:underline cursor-pointer block mt-2">
-                {user?.connections?.length || 0} connections
+                {viewUser?.connections?.length || 0} connections
               </span>
             </div>
 
             <div className="flex gap-2 w-full md:w-auto">
-              <button
-                onClick={() => {
-                  setName(user?.name || "");
-                  setHeadline(user?.headline || "");
-                  setAbout(user?.about || "");
-                  setLocation(user?.location || "");
-                  setIsEditInfoOpen(true);
-                }}
-                className="flex-grow md:flex-grow-0 px-4 py-1.5 rounded-full text-xs font-semibold text-white bg-[#0077b5] hover:bg-sky-850 transition-all shadow-sm cursor-pointer"
-              >
-                Edit Info
-              </button>
-              <button
-                onClick={handleDownloadResume}
-                className="flex-grow md:flex-grow-0 px-4 py-1.5 rounded-full text-xs font-semibold text-[#0077b5] border border-[#0077b5] hover:bg-sky-50 transition-all cursor-pointer flex items-center justify-center gap-1"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                </svg>
-                <span>Download Resume</span>
-              </button>
+              {isOwnProfile ? (
+                <>
+                  <button
+                    onClick={() => {
+                      setName(viewUser?.name || "");
+                      setHeadline(viewUser?.headline || "");
+                      setAbout(viewUser?.about || "");
+                      setLocation(viewUser?.location || "");
+                      setIsEditInfoOpen(true);
+                    }}
+                    className="flex-grow md:flex-grow-0 px-4 py-1.5 rounded-full text-xs font-semibold text-white bg-[#0077b5] hover:bg-sky-850 transition-all shadow-sm cursor-pointer"
+                  >
+                    Edit Info
+                  </button>
+                  <button
+                    onClick={handleDownloadResume}
+                    className="flex-grow md:flex-grow-0 px-4 py-1.5 rounded-full text-xs font-semibold text-[#0077b5] border border-[#0077b5] hover:bg-sky-50 transition-all cursor-pointer flex items-center justify-center gap-1"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    <span>Download Resume</span>
+                  </button>
+                </>
+              ) : (
+                <>
+                  {user?.connections?.includes(viewUser?._id || viewUser?.id) ? (
+                    <button
+                      onClick={() => router.push(`/messages?chatWith=${viewUser?._id || viewUser?.id}`)}
+                      className="flex-grow md:flex-grow-0 px-5 py-1.5 rounded-full text-xs font-semibold text-white bg-[#0077b5] hover:bg-sky-850 transition-all cursor-pointer"
+                    >
+                      Message
+                    </button>
+                  ) : (
+                    <button
+                      onClick={async () => {
+                        try {
+                          await api.post(`/users/user/send_connection_request/${viewUser?._id || viewUser?.id}`);
+                          alert(`Connection request sent to ${viewUser?.name}!`);
+                          // Refresh viewUser
+                          const res = await api.get(`/users/user/${queryId}`);
+                          setViewUser(res.data?.user);
+                        } catch (err) {
+                          alert(err.response?.data?.message || "Failed to connect");
+                        }
+                      }}
+                      className="flex-grow md:flex-grow-0 px-5 py-1.5 rounded-full text-xs font-semibold text-white bg-[#0077b5] hover:bg-sky-850 transition-all cursor-pointer"
+                    >
+                      Connect
+                    </button>
+                  )}
+                  <button
+                    onClick={handleDownloadResume}
+                    className="flex-grow md:flex-grow-0 px-4 py-1.5 rounded-full text-xs font-semibold text-[#0077b5] border border-[#0077b5] hover:bg-sky-50 transition-all cursor-pointer flex items-center justify-center gap-1"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    <span>Download Resume</span>
+                  </button>
+                </>
+              )}
             </div>
           </div>
 
@@ -330,85 +437,87 @@ export default function Profile() {
         </div>
 
         {/* Unique Feature: AI Profile Coach Card */}
-        <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-sky-50 rounded-bl-full opacity-40"></div>
-          
-          <div className="flex items-center gap-2 mb-3 relative z-10">
-            <span className="text-base">✨</span>
-            <h2 className="font-bold text-sm text-slate-800">AI Profile Coach</h2>
-            <span className="bg-sky-100 text-[#0077b5] text-[9px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">Unique AI Feature</span>
-          </div>
+        {isOwnProfile && (
+          <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-sky-50 rounded-bl-full opacity-40"></div>
+            
+            <div className="flex items-center gap-2 mb-3 relative z-10">
+              <span className="text-base">✨</span>
+              <h2 className="font-bold text-sm text-slate-800">AI Profile Coach</h2>
+              <span className="bg-sky-100 text-[#0077b5] text-[9px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">Unique AI Feature</span>
+            </div>
 
-          {/* Progress gauge */}
-          <div className="mb-4 relative z-10">
-            <div className="flex justify-between text-xs font-semibold text-slate-600 mb-1">
-              <span>Profile Strength: <span className="text-slate-800">{getProfileStrengthText()}</span></span>
-              <span>{getProfileStrengthPercentage()}%</span>
+            {/* Progress gauge */}
+            <div className="mb-4 relative z-10">
+              <div className="flex justify-between text-xs font-semibold text-slate-600 mb-1">
+                <span>Profile Strength: <span className="text-slate-800">{getProfileStrengthText()}</span></span>
+                <span>{getProfileStrengthPercentage()}%</span>
+              </div>
+              <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                <div
+                  className="bg-gradient-to-r from-sky-500 to-[#0077b5] h-full transition-all duration-500"
+                  style={{ width: `${getProfileStrengthPercentage()}%` }}
+                ></div>
+              </div>
             </div>
-            <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
-              <div
-                className="bg-gradient-to-r from-sky-500 to-[#0077b5] h-full transition-all duration-500"
-                style={{ width: `${getProfileStrengthPercentage()}%` }}
-              ></div>
-            </div>
-          </div>
 
-          {recommendations.length > 0 ? (
-            <div className="flex flex-col gap-2.5 relative z-10">
-              <span className="text-xs font-semibold text-slate-500">Recommended for you:</span>
-              <ul className="text-xs space-y-2 pl-1">
-                {recommendations.includes("summary") && (
-                  <li className="flex items-center justify-between text-slate-650">
-                    <span className="flex items-center gap-1.5">
-                      <span className="text-amber-500 font-bold">⚠️</span>
-                      <span>Your profile lacks a professional summary.</span>
-                    </span>
-                    <button
-                      onClick={handleGenerateAISummary}
-                      disabled={isGeneratingSummary}
-                      className="text-xs font-semibold text-[#0077b5] hover:underline flex items-center gap-1"
-                    >
-                      {isGeneratingSummary ? (
-                        <div className="animate-spin rounded-full h-3.5 w-3.5 border-2 border-[#0077b5] border-t-transparent"></div>
-                      ) : (
-                        "✨ Generate AI Bio"
-                      )}
-                    </button>
-                  </li>
-                )}
-                {recommendations.includes("experience") && (
-                  <li className="flex items-center gap-1.5 text-slate-650">
-                    <span className="text-amber-500 font-bold">⚠️</span>
-                    <span>No work history. Add experience to show achievements.</span>
-                  </li>
-                )}
-                {recommendations.includes("education") && (
-                  <li className="flex items-center gap-1.5 text-slate-650">
-                    <span className="text-amber-500 font-bold">⚠️</span>
-                    <span>No school credentials. Complete education data.</span>
-                  </li>
-                )}
-                {recommendations.includes("skills") && (
-                  <li className="flex items-center gap-1.5 text-slate-650">
-                    <span className="text-amber-500 font-bold">⚠️</span>
-                    <span>Add at least 3 skills to show capabilities.</span>
-                  </li>
-                )}
-              </ul>
-            </div>
-          ) : (
-            <div className="text-xs text-emerald-600 font-medium flex items-center gap-1.5">
-              <span>✓</span>
-              <span>Congratulations! Your profile is fully complete and ready to stand out!</span>
-            </div>
-          )}
-        </div>
+            {recommendations.length > 0 ? (
+              <div className="flex flex-col gap-2.5 relative z-10">
+                <span className="text-xs font-semibold text-slate-500">Recommended for you:</span>
+                <ul className="text-xs space-y-2 pl-1">
+                  {recommendations.includes("summary") && (
+                    <li className="flex items-center justify-between text-slate-655 font-bold">
+                      <span className="flex items-center gap-1.5">
+                        <span className="text-amber-500">⚠️</span>
+                        <span>Your profile lacks a professional summary.</span>
+                      </span>
+                      <button
+                        onClick={handleGenerateAISummary}
+                        disabled={isGeneratingSummary}
+                        className="text-xs font-semibold text-[#0077b5] hover:underline flex items-center gap-1"
+                      >
+                        {isGeneratingSummary ? (
+                          <div className="animate-spin rounded-full h-3.5 w-3.5 border-2 border-[#0077b5] border-t-transparent"></div>
+                        ) : (
+                          "✨ Generate AI Bio"
+                        )}
+                      </button>
+                    </li>
+                  )}
+                  {recommendations.includes("experience") && (
+                    <li className="flex items-center gap-1.5 text-slate-655 font-bold">
+                      <span className="text-amber-500">⚠️</span>
+                      <span>No work history. Add experience to show achievements.</span>
+                    </li>
+                  )}
+                  {recommendations.includes("education") && (
+                    <li className="flex items-center gap-1.5 text-slate-655 font-bold">
+                      <span className="text-amber-500">⚠️</span>
+                      <span>No school credentials. Complete education data.</span>
+                    </li>
+                  )}
+                  {recommendations.includes("skills") && (
+                    <li className="flex items-center gap-1.5 text-slate-655 font-bold">
+                      <span className="text-amber-500">⚠️</span>
+                      <span>Add at least 3 skills to show capabilities.</span>
+                    </li>
+                  )}
+                </ul>
+              </div>
+            ) : (
+              <div className="text-xs text-emerald-600 font-semibold flex items-center gap-1.5">
+                <span>✓</span>
+                <span>Congratulations! Your profile is fully complete and ready to stand out!</span>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* About/Bio Section Widget */}
         <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm">
           <h2 className="font-bold text-sm text-slate-800 mb-3">About</h2>
           <p className="text-xs text-slate-650 leading-relaxed whitespace-pre-wrap">
-            {user?.about || "Write something about yourself to complete your profile."}
+            {viewUser?.about || "Write something about yourself to complete your profile."}
           </p>
         </div>
 
@@ -416,18 +525,20 @@ export default function Profile() {
         <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm flex flex-col gap-3">
           <div className="flex justify-between items-center mb-2">
             <h2 className="font-bold text-sm text-slate-800">Experience</h2>
-            <button
-              onClick={() => setIsAddExpOpen(true)}
-              className="text-slate-500 hover:text-[#0077b5] p-1 rounded-full hover:bg-slate-100 transition-colors focus:outline-none"
-            >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
-              </svg>
-            </button>
+            {isOwnProfile && (
+              <button
+                onClick={() => setIsAddExpOpen(true)}
+                className="text-slate-500 hover:text-[#0077b5] p-1 rounded-full hover:bg-slate-100 transition-colors focus:outline-none"
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                </svg>
+              </button>
+            )}
           </div>
-          {user?.experience && user.experience.length > 0 ? (
+          {viewUser?.experience && viewUser.experience.length > 0 ? (
             <div className="flex flex-col gap-4">
-              {user.experience.map((exp, index) => (
+              {viewUser.experience.map((exp, index) => (
                 <div key={index} className="flex gap-3 pb-3 border-b border-slate-100 last:border-b-0 last:pb-0">
                   <div className="w-10 h-10 bg-slate-100 rounded flex items-center justify-center font-bold text-slate-600">
                     {exp.company?.[0]?.toUpperCase()}
@@ -451,18 +562,20 @@ export default function Profile() {
         <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm flex flex-col gap-3">
           <div className="flex justify-between items-center mb-2">
             <h2 className="font-bold text-sm text-slate-800">Education</h2>
-            <button
-              onClick={() => setIsAddEduOpen(true)}
-              className="text-slate-500 hover:text-[#0077b5] p-1 rounded-full hover:bg-slate-100 transition-colors focus:outline-none"
-            >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
-              </svg>
-            </button>
+            {isOwnProfile && (
+              <button
+                onClick={() => setIsAddEduOpen(true)}
+                className="text-slate-500 hover:text-[#0077b5] p-1 rounded-full hover:bg-slate-100 transition-colors focus:outline-none"
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                </svg>
+              </button>
+            )}
           </div>
-          {user?.education && user.education.length > 0 ? (
+          {viewUser?.education && viewUser.education.length > 0 ? (
             <div className="flex flex-col gap-4">
-              {user.education.map((edu, index) => (
+              {viewUser.education.map((edu, index) => (
                 <div key={index} className="flex gap-3 pb-3 border-b border-slate-100 last:border-b-0 last:pb-0">
                   <div className="w-10 h-10 bg-slate-100 rounded flex items-center justify-center font-bold text-slate-600">
                     {edu.school?.[0]?.toUpperCase()}
@@ -485,37 +598,41 @@ export default function Profile() {
         {/* Skills Section Widget */}
         <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm">
           <h2 className="font-bold text-sm text-slate-800 mb-3">Skills</h2>
-          <form onSubmit={handleAddSkill} className="flex gap-2 mb-4">
-            <input
-              value={newSkill}
-              onChange={(e) => setNewSkill(e.target.value)}
-              className="border border-slate-300 rounded px-3 py-1 text-xs flex-grow focus:outline-none focus:ring-1 focus:ring-[#0077b5] text-slate-800"
-              placeholder="Add a new skill (e.g. Next.js)"
-            />
-            <button
-              type="submit"
-              className="px-4 py-1.5 bg-[#0077b5] hover:bg-sky-850 text-white rounded text-xs font-semibold cursor-pointer"
-            >
-              Add
-            </button>
-          </form>
-          {user?.skills && user.skills.length > 0 ? (
+          {isOwnProfile && (
+            <form onSubmit={handleAddSkill} className="flex gap-2 mb-4">
+              <input
+                value={newSkill}
+                onChange={(e) => setNewSkill(e.target.value)}
+                className="border border-slate-300 rounded px-3 py-1 text-xs flex-grow focus:outline-none focus:ring-1 focus:ring-[#0077b5] text-slate-800"
+                placeholder="Add a new skill (e.g. Next.js)"
+              />
+              <button
+                type="submit"
+                className="px-4 py-1.5 bg-[#0077b5] hover:bg-sky-850 text-white rounded text-xs font-semibold cursor-pointer"
+              >
+                Add
+              </button>
+            </form>
+          )}
+          {viewUser?.skills && viewUser.skills.length > 0 ? (
             <div className="flex flex-wrap gap-2">
-              {user.skills.map((skill, index) => (
+              {viewUser.skills.map((skill, index) => (
                 <span
                   key={index}
                   className="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs px-3 py-1 rounded-full flex items-center gap-1.5 group transition-colors"
                 >
                   <span>{skill}</span>
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveSkill(skill)}
-                    className="text-slate-400 hover:text-red-500 rounded-full focus:outline-none"
-                  >
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
+                  {isOwnProfile && (
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveSkill(skill)}
+                      className="text-slate-400 hover:text-red-500 rounded-full focus:outline-none"
+                    >
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  )}
                 </span>
               ))}
             </div>
@@ -523,7 +640,7 @@ export default function Profile() {
             <span className="text-xs text-slate-400 text-center py-2 block">No skills added yet.</span>
           )}
 
-          {recommendedSkillsList.length > 0 && (
+          {isOwnProfile && recommendedSkillsList.length > 0 && (
             <div className="mt-4 pt-3 border-t border-slate-100">
               <span className="text-xs text-slate-500 font-semibold block mb-2">Recommended Skills (Quick Add):</span>
               <div className="flex flex-wrap gap-1.5">
@@ -545,7 +662,6 @@ export default function Profile() {
             </div>
           )}
         </div>
-
       </div>
 
       {/* MODAL: AI Summary Draft Details */}
