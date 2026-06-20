@@ -168,34 +168,22 @@ export default function PostComposer({ onPost }) {
       {/* Bottom Part: Action Buttons */}
       <div className="flex items-center justify-between mt-3 pt-2 border-t border-slate-100 text-xs font-semibold text-slate-500">
         <button
-          onClick={() => triggerFileSelect("image")}
-          className="flex items-center gap-2 hover:bg-slate-100 p-2 rounded cursor-pointer transition-all focus:outline-none"
-        >
-          <svg className="w-5 h-5 text-sky-500" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z" />
-          </svg>
-          <span>Media</span>
-        </button>
-        <button
           onClick={() => triggerFileSelect("video")}
           className="flex items-center gap-2 hover:bg-slate-100 p-2 rounded cursor-pointer transition-all focus:outline-none"
         >
-          <svg className="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 24 24">
             <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z" />
           </svg>
           <span>Video</span>
         </button>
         <button
-          onClick={() => {
-            setModalMode("event");
-            setIsModalOpen(true);
-          }}
+          onClick={() => triggerFileSelect("image")}
           className="flex items-center gap-2 hover:bg-slate-100 p-2 rounded cursor-pointer transition-all focus:outline-none"
         >
-          <svg className="w-5 h-5 text-amber-500" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z" />
+          <svg className="w-5 h-5 text-sky-500" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-1 16H6c-.55 0-1-.45-1-1V9h14v9c0 .55-.45 1-1 1zm1-11H5V5h14v3z" />
           </svg>
-          <span>Event</span>
+          <span>Photo</span>
         </button>
         <button
           onClick={() => {
@@ -204,7 +192,7 @@ export default function PostComposer({ onPost }) {
           }}
           className="flex items-center gap-2 hover:bg-slate-100 p-2 rounded cursor-pointer transition-all focus:outline-none"
         >
-          <svg className="w-5 h-5 text-red-400" fill="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5 text-orange-500" fill="currentColor" viewBox="0 0 24 24">
             <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
           </svg>
           <span>Write article</span>

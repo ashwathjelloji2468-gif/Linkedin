@@ -21,6 +21,18 @@ export default function Feed() {
       {/* Create Post composer */}
       <PostComposer onPost={handlePostSubmit} />
 
+      {/* Sort By Separator */}
+      <div className="flex items-center justify-between my-2 text-[11px] text-slate-500">
+        <div className="flex-grow border-t border-slate-300 mr-3"></div>
+        <div className="flex items-center gap-1 font-semibold text-slate-700 cursor-pointer hover:text-slate-900 transition-colors">
+          <span>Sort by:</span>
+          <span className="font-bold text-slate-900">Top</span>
+          <svg className="w-3 h-3 text-slate-750" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M7 10l5 5 5-5H7z" />
+          </svg>
+        </div>
+      </div>
+
       {/* Feed Area */}
       {loading && posts.length === 0 ? (
         <div className="flex flex-col items-center py-8">

@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "next/router";
 import { fetchUserProfile } from "@/config/redux/action/authAction";
 import Header from "./Header";
+import FloatingMessaging from "./FloatingMessaging";
 
 export default function Layout({ children }) {
   const dispatch = useDispatch();
@@ -66,6 +67,7 @@ export default function Layout({ children }) {
       <main className="max-w-6xl mx-auto w-full px-4 py-6 flex-grow">
         {children}
       </main>
+      <FloatingMessaging />
     </div>
   );
 }

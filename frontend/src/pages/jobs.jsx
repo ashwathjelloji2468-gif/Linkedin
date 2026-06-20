@@ -15,6 +15,7 @@ export default function Jobs() {
   const [isSubmittingApp, setIsSubmittingApp] = useState(false);
   const [coverLetter, setCoverLetter] = useState("");
   const [resumeOption, setResumeOption] = useState("profile");
+  const [activeTab, setActiveTab] = useState("all"); // 'all' | 'applied'
 
   // Fetch persistently applied jobs from the database
   useEffect(() => {
@@ -37,7 +38,7 @@ export default function Jobs() {
       company: "Google",
       location: "Mountain View, CA (Hybrid)",
       posted: "1 day ago",
-      logoBg: "bg-red-100 text-red-600 font-bold",
+      logoBg: "bg-red-100 text-red-650 font-bold",
       logoText: "G",
       description:
         "We are looking for a Frontend Engineer to build premium, modern web applications using React and Next.js. You will collaborate closely with designers and product managers to create interactive features that wow our users.",
@@ -54,7 +55,7 @@ export default function Jobs() {
       company: "Stripe",
       location: "San Francisco, CA (Remote)",
       posted: "3 days ago",
-      logoBg: "bg-indigo-100 text-indigo-600 font-bold",
+      logoBg: "bg-indigo-100 text-indigo-650 font-bold",
       logoText: "S",
       description:
         "Join our engineering team to build payment infrastructure for the internet. You will work on full-stack systems, managing database schemas, core routing, and crafting sleek dashboard user interfaces.",
@@ -88,7 +89,7 @@ export default function Jobs() {
       company: "Meta",
       location: "Menlo Park, CA (Hybrid)",
       posted: "2 days ago",
-      logoBg: "bg-blue-100 text-blue-600 font-bold",
+      logoBg: "bg-blue-100 text-blue-650 font-bold",
       logoText: "M",
       description:
         "Join our FAIR (Fundamental AI Research) team to train next-generation large language models. You will design neural architectures, scale training pipelines, and optimize model inference latency.",
@@ -139,7 +140,7 @@ export default function Jobs() {
       company: "Amazon",
       location: "Seattle, WA (Hybrid)",
       posted: "6 days ago",
-      logoBg: "bg-orange-100 text-orange-600 font-bold",
+      logoBg: "bg-orange-100 text-orange-605 font-bold",
       logoText: "A",
       description:
         "Build highly scalable distributed systems powering retail checkout pipelines. You will design robust microservices, optimize database queries, and author clean, reliable Go codebase.",
@@ -156,7 +157,7 @@ export default function Jobs() {
       company: "Spotify",
       location: "New York, NY (Remote)",
       posted: "1 week ago",
-      logoBg: "bg-emerald-100 text-emerald-600 font-bold",
+      logoBg: "bg-emerald-100 text-emerald-650 font-bold",
       logoText: "S",
       description:
         "Deliver premium audio experiences to mobile apps. You will build music streaming features using React Native and optimize local storage and audio buffering algorithms.",
@@ -165,7 +166,7 @@ export default function Jobs() {
         "Solid foundation in TypeScript and mobile state management (Redux)",
         "Experience collaborating with Git workflow",
       ],
-      salary: "$130,005 - $170,000/year",
+      salary: "$130,000 - $170,000/year",
     },
     {
       id: 9,
@@ -235,6 +236,142 @@ export default function Jobs() {
       ],
       salary: "$145,000 - $185,000/year",
     },
+    {
+      id: 13,
+      title: "Graduate Research Assistant (AI & ML Labs)",
+      company: "CBIT Research & Development",
+      location: "Hyderabad, TS (Hybrid)",
+      posted: "2 days ago",
+      logoBg: "bg-sky-100 text-sky-700 font-bold border border-sky-300",
+      logoText: "CB",
+      description:
+        "Join Chaitanya Bharathi Institute of Technology's premier research wing. Assist in training and evaluating domain-specific LLMs and developing fullstack prototypes for smart academic services.",
+      requirements: [
+        "Familiarity with Python, PyTorch, and NLP models",
+        "Hands-on experience in machine learning architectures",
+        "Strong analytical and documentation skills",
+      ],
+      salary: "₹35,000 - ₹50,000/month",
+    },
+    {
+      id: 14,
+      title: "Software Development Engineer Intern",
+      company: "Chaitanya Bharathi Institute of Technology",
+      location: "Secunderabad, TS (On-site)",
+      posted: "4 days ago",
+      logoBg: "bg-amber-150 text-amber-800 font-bold border border-amber-300",
+      logoText: "CB",
+      description:
+        "Work directly with CBIT's internal IT systems team to rebuild student portals and administrative dashboards. Gain hands-on exposure deploying live Next.js platforms.",
+      requirements: [
+        "Pursuing B.E. / B.Tech in CSE, IT, or ECE at CBIT",
+        "Strong understanding of React, JavaScript, and CSS layout engines",
+        "Active GitHub profile with web projects",
+      ],
+      salary: "₹15,000 - ₹20,000/month",
+    },
+    {
+      id: 15,
+      title: "Frontend Engineer (Cloud UI)",
+      company: "Microsoft India",
+      location: "Hyderabad, TS (Hybrid)",
+      posted: "3 days ago",
+      logoBg: "bg-blue-50 text-blue-700 font-bold",
+      logoText: "M",
+      description:
+        "Design and construct intuitive user interfaces for Azure AI developer modules. You will ensure high performance, design consistency, and premium micro-interactions.",
+      requirements: [
+        "2+ years of experience with React, CSS, and Tailwind CSS",
+        "Familiarity with cloud dashboards and REST API integration",
+        "Excellent collaborative engineering practices",
+      ],
+      salary: "₹18,00,000 - ₹25,00,000/year",
+    },
+    {
+      id: 16,
+      title: "Associate Software Engineer",
+      company: "Google Hyderabad",
+      location: "Hyderabad, TS (Hybrid)",
+      posted: "5 days ago",
+      logoBg: "bg-red-50 text-red-655 font-bold border border-red-200",
+      logoText: "G",
+      description:
+        "Build the foundation of secure consumer interfaces. You will develop highly scalable systems, coordinate with global product teams, and learn accelerated dev setups.",
+      requirements: [
+        "Solid foundations in Data Structures and Algorithms",
+        "Familiarity with Java, C++, Python, or Go",
+        "Experience in front-end frameworks (React/Angular) is a major plus",
+      ],
+      salary: "₹22,00,000 - ₹30,00,000/year",
+    },
+    {
+      id: 17,
+      title: "Full Stack AI Engineer",
+      company: "xAI",
+      location: "San Francisco, CA (Remote)",
+      posted: "2 days ago",
+      logoBg: "bg-black text-white font-bold border border-slate-700",
+      logoText: "X",
+      description:
+        "Construct responsive chat dashboards and pipeline metrics overlays. You will deploy frontend interfaces that serve queries to deep neural weights instantly.",
+      requirements: [
+        "Expertise in React, Next.js, and tailwind styling",
+        "Familiarity with LLM token streaming APIs and WebSockets",
+        "Ability to ship clean prototypes at lightning speed",
+      ],
+      salary: "$160,000 - $220,000/year",
+    },
+    {
+      id: 18,
+      title: "React Native Mobile Lead",
+      company: "Uber",
+      location: "Bangalore, KA (Hybrid)",
+      posted: "6 days ago",
+      logoBg: "bg-slate-900 text-white font-bold",
+      logoText: "U",
+      description:
+        "Architect mobile interfaces for driver coordination apps. Lead a focused engineering group maintaining React Native modular components across Android/iOS platforms.",
+      requirements: [
+        "5+ years of React Native and Redux architecture",
+        "Familiarity with native Swift/Kotlin bindings",
+        "Experience optimizing app start times and memory profiles",
+      ],
+      salary: "₹35,00,000 - ₹48,00,000/year",
+    },
+    {
+      id: 19,
+      title: "Senior Frontend Developer (Next.js/Tailwind)",
+      company: "Vercel India",
+      location: "Hyderabad, TS (Remote)",
+      posted: "1 week ago",
+      logoBg: "bg-black text-white font-bold",
+      logoText: "V",
+      description:
+        "Author next-gen starter templates and documentation modules. Educate developers globally while shipping responsive frontend layers supporting edge networks.",
+      requirements: [
+        "Exceptional skills in Next.js App Router and edge logic",
+        "Demonstrated history of contributing to React open source",
+        "High aesthetic standards for clean design systems",
+      ],
+      salary: "₹28,00,000 - ₹38,00,000/year",
+    },
+    {
+      id: 20,
+      title: "Software Engineer (UI Platform)",
+      company: "Tesla",
+      location: "Austin, TX (Hybrid)",
+      posted: "1 week ago",
+      logoBg: "bg-red-600 text-white font-bold",
+      logoText: "T",
+      description:
+        "Construct dashboard overlays and operational screens for energy networks. Integrate three-dimensional vehicle charts with responsive control hooks.",
+      requirements: [
+        "Advanced React rendering, context management, and animations",
+        "Familiarity with canvas charts or Three.js/WebGL is a plus",
+        "Strong focus on responsive design and telemetry integration",
+      ],
+      salary: "$130,000 - $170,000/year",
+    },
   ];
 
   const handleApply = (jobId) => {
@@ -258,7 +395,7 @@ export default function Jobs() {
     // Scan for matched keywords
     let requiredTech = techKeywords.filter(tech => jobText.includes(tech.toLowerCase()));
 
-    // Deduplicate substrings (e.g. if we match "Tailwind CSS", filter out "Tailwind" to avoid duplicates)
+    // Deduplicate substrings
     requiredTech = requiredTech.filter((tech, index) => {
       return !requiredTech.some((otherTech, otherIndex) => 
         otherIndex !== index && otherTech.toLowerCase().includes(tech.toLowerCase()) && otherTech.toLowerCase() !== tech.toLowerCase()
@@ -295,25 +432,34 @@ export default function Jobs() {
     dispatch(updateProfile({ skills: uniqueSkills }));
   };
 
+  // Filter jobs by top search query
   const filteredJobs = mockJobs.filter(
     (job) =>
       job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       job.company.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const activeJob = mockJobs.find((j) => j.id === selectedJobId) || mockJobs[0];
+  // Filter jobs by currently selected tab (All vs. Applied)
+  const displayedJobs = filteredJobs.filter((job) => {
+    if (activeTab === "applied") {
+      return appliedJobs.includes(job.id);
+    }
+    return true;
+  });
+
+  const activeJob = displayedJobs.find((j) => j.id === selectedJobId) || displayedJobs[0];
   const { matchPercentage, matchedSkills, missingSkills } = calculateSkillMatch(activeJob);
 
   return (
     <Layout>
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 text-left">
         {/* Top Search Bar */}
         <div className="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
           <div className="relative">
             <input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-[#edf3f8] text-slate-800 text-sm border border-transparent rounded px-9 py-2.5 focus:outline-none focus:ring-1 focus:ring-[#0077b5] focus:bg-white placeholder-slate-500 transition-all font-sans"
+              className="w-full bg-[#edf3f8] text-slate-800 text-sm border border-transparent rounded-full px-9 py-2.5 focus:outline-none focus:ring-1 focus:ring-slate-900 focus:bg-white placeholder-slate-500 transition-all font-sans"
               placeholder="Search jobs by title or company"
             />
             <svg
@@ -334,39 +480,98 @@ export default function Jobs() {
 
         {/* Main Columns Content */}
         <div className="grid grid-cols-12 gap-5 items-start">
-          {/* Left Column: Jobs List */}
-          <div className="col-span-12 md:col-span-5 flex flex-col gap-2 max-h-[70vh] overflow-y-auto pr-1">
-            {filteredJobs.length > 0 ? (
-              filteredJobs.map((job) => (
-                <div
-                  key={job.id}
-                  onClick={() => setSelectedJobId(job.id)}
-                  className={`border rounded-lg p-4 cursor-pointer transition-all ${
-                    selectedJobId === job.id
-                      ? "border-[#0077b5] bg-sky-50/40 shadow-sm"
-                      : "border-slate-200 bg-white hover:border-slate-400 hover:shadow-sm"
-                  }`}
-                >
-                  <div className="flex items-start gap-3">
-                    <div className={`w-10 h-10 rounded flex items-center justify-center text-lg ${job.logoBg}`}>
-                      {job.logoText}
-                    </div>
-                    <div className="overflow-hidden flex-grow">
-                      <h3 className="font-semibold text-sm text-slate-800 hover:underline truncate">
-                        {job.title}
-                      </h3>
-                      <span className="text-xs text-slate-600 block mt-0.5 truncate">{job.company}</span>
-                      <span className="text-xs text-slate-400 block mt-0.5 truncate">{job.location}</span>
-                      <span className="text-[10px] text-slate-400 block mt-2">{job.posted}</span>
+          
+          {/* Left Column: Jobs List & Tab Selection */}
+          <div className="col-span-12 md:col-span-5 flex flex-col gap-3">
+            {/* Tabs */}
+            <div className="flex border border-slate-200 bg-white rounded-lg p-1 shadow-sm select-none">
+              <button
+                onClick={() => {
+                  setActiveTab("all");
+                  const allJobsFiltered = filteredJobs;
+                  if (allJobsFiltered.length > 0) {
+                    setSelectedJobId(allJobsFiltered[0].id);
+                  }
+                }}
+                className={`flex-1 py-2 text-xs font-bold rounded-md transition-all cursor-pointer text-center ${
+                  activeTab === "all"
+                    ? "bg-[#0077b5] text-white shadow-sm"
+                    : "text-slate-500 hover:text-slate-800 hover:bg-slate-50"
+                }`}
+              >
+                All Jobs ({filteredJobs.length})
+              </button>
+              <button
+                onClick={() => {
+                  setActiveTab("applied");
+                  const appliedJobsFiltered = filteredJobs.filter(j => appliedJobs.includes(j.id));
+                  if (appliedJobsFiltered.length > 0) {
+                    setSelectedJobId(appliedJobsFiltered[0].id);
+                  } else {
+                    setSelectedJobId(null);
+                  }
+                }}
+                className={`flex-1 py-2 text-xs font-bold rounded-md transition-all cursor-pointer text-center ${
+                  activeTab === "applied"
+                    ? "bg-[#0077b5] text-white shadow-sm"
+                    : "text-slate-500 hover:text-slate-800 hover:bg-slate-50"
+                }`}
+              >
+                Applied ({appliedJobs.length})
+              </button>
+            </div>
+
+            {/* Scrollable Job List */}
+            <div className="flex flex-col gap-2 max-h-[66vh] overflow-y-auto pr-1">
+              {displayedJobs.length > 0 ? (
+                displayedJobs.map((job) => (
+                  <div
+                    key={job.id}
+                    onClick={() => setSelectedJobId(job.id)}
+                    className={`border rounded-lg p-4 cursor-pointer transition-all ${
+                      selectedJobId === job.id
+                        ? "border-[#0077b5] bg-sky-50/40 shadow-sm"
+                        : "border-slate-200 bg-white hover:border-slate-400 hover:shadow-sm"
+                    }`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className={`w-10 h-10 rounded flex items-center justify-center text-xs ${job.logoBg} flex-shrink-0 shadow-sm`}>
+                        {job.logoText}
+                      </div>
+                      <div className="overflow-hidden flex-grow">
+                        <h3 className="font-bold text-sm text-slate-800 hover:underline truncate">
+                          {job.title}
+                        </h3>
+                        <span className="text-xs text-slate-600 block mt-0.5 truncate">{job.company}</span>
+                        <span className="text-xs text-slate-400 block mt-0.5 truncate">{job.location}</span>
+                        <div className="flex items-center justify-between mt-2.5">
+                          <span className="text-[10px] text-slate-400">{job.posted}</span>
+                          {appliedJobs.includes(job.id) && (
+                            <span className="text-[9px] font-bold text-emerald-700 bg-emerald-100 border border-emerald-300 px-2 py-0.5 rounded-full flex items-center gap-1">
+                              <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                              </svg>
+                              Applied
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     </div>
                   </div>
+                ))
+              ) : (
+                <div className="text-center py-10 bg-white border border-slate-200 rounded-lg shadow-sm px-4">
+                  <svg className="w-12 h-12 text-slate-300 mx-auto mb-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0a2 2 0 01-2 2H6a2 2 0 01-2-2m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m9-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span className="text-xs text-slate-400 font-semibold block leading-relaxed">
+                    {activeTab === "applied"
+                      ? "You haven't submitted any job applications yet."
+                      : "No matching job posts found."}
+                  </span>
                 </div>
-              ))
-            ) : (
-              <span className="text-xs text-slate-400 text-center py-6 block bg-white border border-slate-200 rounded-lg">
-                No matching jobs found.
-              </span>
-            )}
+              )}
+            </div>
           </div>
 
           {/* Right Column: Job Description Details */}
@@ -374,99 +579,100 @@ export default function Jobs() {
             {activeJob ? (
               <div className="flex flex-col gap-4">
                 {/* Header info */}
-                <div className="flex items-start gap-4 pb-4 border-b border-slate-100">
-                  <div className={`w-16 h-16 rounded flex items-center justify-center text-3xl ${activeJob.logoBg}`}>
+                <div className="flex items-start gap-4">
+                  <div className={`w-16 h-16 rounded flex items-center justify-center text-3xl ${activeJob.logoBg} flex-shrink-0 shadow-sm`}>
                     {activeJob.logoText}
                   </div>
-                  <div className="flex-grow">
+                  <div>
                     <h2 className="text-xl font-bold text-slate-800 leading-tight">{activeJob.title}</h2>
-                    <span className="text-sm font-semibold text-slate-700 block mt-1">
+                    <span className="text-sm font-semibold text-slate-600 block mt-1 hover:underline cursor-pointer">
                       {activeJob.company}
                     </span>
                     <span className="text-xs text-slate-500 block mt-0.5">{activeJob.location}</span>
-                    <div className="mt-2 flex gap-2">
-                      <span className="bg-slate-100 text-slate-650 text-[10px] px-2 py-0.5 rounded font-medium">
+                    <div className="flex items-center gap-2 mt-2 font-medium">
+                      <span className="text-xs text-slate-400">{activeJob.posted}</span>
+                      <span className="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded">
                         {activeJob.salary}
                       </span>
                     </div>
                   </div>
                 </div>
 
-                {/* Unique Feature: AI Skill Fit Analysis Card */}
-                <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col gap-3 relative overflow-hidden">
-                  <div className="absolute top-0 right-0 w-16 h-16 bg-sky-100 rounded-bl-full opacity-35"></div>
-                  
-                  <div className="flex items-center gap-2 relative z-10">
-                    <span className="text-sm">✨</span>
-                    <h4 className="font-bold text-xs text-slate-800">AI Skill Match Coach</h4>
-                    <span className="bg-sky-100 text-[#0077b5] text-[8px] px-1 py-0.5 rounded font-bold uppercase tracking-wider">Unique Match Analysis</span>
+                {/* AI Skill Match Gauge Card */}
+                <div className="bg-sky-50 border border-sky-100 rounded-xl p-4 flex flex-col gap-3 relative overflow-hidden mt-2">
+                  <div className="flex items-start justify-between relative z-10">
+                    <div className="flex items-center gap-2">
+                      <span className="text-base">✨</span>
+                      <h3 className="font-bold text-sm text-slate-800">AI Profile Skill Match</h3>
+                    </div>
+                    <span className="text-lg font-bold text-[#0077b5]">{matchPercentage}% Match</span>
                   </div>
 
-                  <div className="flex items-center gap-4 relative z-10">
-                    {/* Gauge percentage */}
-                    <div className="flex flex-col items-center">
-                      <span className={`text-xl font-black ${matchPercentage >= 70 ? "text-emerald-600" : "text-amber-600"}`}>
-                        {matchPercentage}%
-                      </span>
-                      <span className="text-[8px] text-slate-400 font-bold uppercase tracking-wider">Score</span>
-                    </div>
+                  <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                    <div
+                      className="bg-[#0077b5] h-full rounded-full transition-all duration-500"
+                      style={{ width: `${matchPercentage}%` }}
+                    />
+                  </div>
 
-                    <div className="flex-grow flex flex-col gap-2">
-                      {/* Matched skills */}
-                      {matchedSkills.length > 0 && (
-                        <div className="flex flex-wrap gap-1 items-center">
-                          <span className="text-[10px] text-slate-400 font-semibold mr-1">Matched:</span>
-                          {matchedSkills.map(skill => (
-                            <span key={skill} className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[9px] px-2 py-0.5 rounded-full font-medium flex items-center gap-0.5">
+                  {/* Skills lists */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1 text-xs">
+                    <div>
+                      <span className="font-bold text-slate-700 block mb-1">Matched Skills ({matchedSkills.length})</span>
+                      {matchedSkills.length > 0 ? (
+                        <div className="flex flex-wrap gap-1">
+                          {matchedSkills.map((skill) => (
+                            <span key={skill} className="bg-emerald-50 text-emerald-800 border border-emerald-200 px-2 py-0.5 rounded text-[10px] font-bold">
                               ✓ {skill}
                             </span>
                           ))}
                         </div>
+                      ) : (
+                        <span className="text-[10px] text-slate-400 block font-medium">No matched skills in profile.</span>
                       )}
-
-                      {/* Missing skills */}
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-700 block mb-1">Missing Skills ({missingSkills.length})</span>
                       {missingSkills.length > 0 ? (
-                        <div className="flex flex-wrap gap-1 items-center justify-between">
-                          <div className="flex flex-wrap gap-1 items-center">
-                            <span className="text-[10px] text-slate-400 font-semibold mr-1">Missing:</span>
-                            {missingSkills.map(skill => (
-                              <span key={skill} className="bg-amber-50 text-amber-700 border border-amber-200 text-[9px] px-2 py-0.5 rounded-full font-medium">
-                                + {skill}
-                              </span>
-                            ))}
-                          </div>
-                          
-                          <button
-                            onClick={() => handleAddMissingSkills(missingSkills)}
-                            className="text-[9px] font-bold text-[#0077b5] hover:underline cursor-pointer flex items-center gap-0.5"
-                          >
-                            ⚡ Auto-Add Skills
-                          </button>
+                        <div className="flex flex-wrap gap-1">
+                          {missingSkills.map((skill) => (
+                            <span key={skill} className="bg-red-50/50 text-red-700 border border-red-200 px-2 py-0.5 rounded text-[10px] font-bold">
+                              + {skill}
+                            </span>
+                          ))}
                         </div>
                       ) : (
-                        <div className="text-[10px] text-emerald-600 font-semibold flex items-center gap-1">
-                          ✓ Perfect match! You possess all required technical skills for this role.
-                        </div>
+                        <span className="text-[10px] text-slate-400 block font-medium">No missing skills! You're a perfect match.</span>
                       )}
                     </div>
                   </div>
+
+                  {missingSkills.length > 0 && (
+                    <div className="flex justify-start mt-2">
+                      <button
+                        onClick={() => handleAddMissingSkills(missingSkills)}
+                        className="px-3.5 py-1.5 bg-[#0077b5] text-white hover:bg-sky-850 rounded-full font-bold text-[10px] transition-all cursor-pointer shadow"
+                      >
+                        ⚡ Add Missing Skills to Profile
+                      </button>
+                    </div>
+                  )}
                 </div>
 
-                {/* Body details */}
-                <div className="flex flex-col gap-4">
-                  <div>
-                    <h3 className="font-bold text-sm text-slate-800 mb-2">Job Description</h3>
-                    <p className="text-xs text-slate-650 leading-relaxed">{activeJob.description}</p>
-                  </div>
+                {/* Job Description details */}
+                <div className="flex flex-col gap-3 mt-2">
+                  <h3 className="font-bold text-sm text-slate-800">Job Description</h3>
+                  <p className="text-xs text-slate-600 leading-relaxed font-sans">{activeJob.description}</p>
+                </div>
 
-                  <div>
-                    <h3 className="font-bold text-sm text-slate-800 mb-2">Requirements</h3>
-                    <ul className="list-disc list-inside text-xs text-slate-650 space-y-1 pl-1">
-                      {activeJob.requirements.map((req, index) => (
-                        <li key={index}>{req}</li>
-                      ))}
-                    </ul>
-                  </div>
+                {/* Requirements */}
+                <div className="flex flex-col gap-3">
+                  <h3 className="font-bold text-sm text-slate-800">Requirements</h3>
+                  <ul className="list-disc pl-5 text-xs text-slate-655 space-y-1.5 font-sans">
+                    {activeJob.requirements.map((req, index) => (
+                      <li key={index}>{req}</li>
+                    ))}
+                  </ul>
                 </div>
 
                 {/* Apply Button */}
@@ -478,16 +684,16 @@ export default function Jobs() {
                       }
                     }}
                     disabled={appliedJobs.includes(activeJob.id)}
-                    className={`px-6 py-2 rounded-full font-semibold text-xs transition-all flex items-center gap-1.5 cursor-pointer ${
+                    className={`px-6 py-2 rounded-full font-bold text-xs transition-all flex items-center gap-1.5 cursor-pointer ${
                       appliedJobs.includes(activeJob.id)
-                        ? "bg-emerald-100 text-emerald-700 border border-emerald-300 font-bold"
-                        : "bg-[#0077b5] text-white hover:bg-sky-800 shadow-md"
+                        ? "bg-emerald-100 text-emerald-700 border border-emerald-300"
+                        : "bg-[#0077b5] text-white hover:bg-sky-850 shadow"
                     }`}
                   >
                     {appliedJobs.includes(activeJob.id) ? (
                       <>
-                        <svg className="w-4 h-4 text-emerald-700 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        <svg className="w-4 h-4 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3.5} d="M5 13l4 4L19 7" />
                         </svg>
                         <span>Applied successfully</span>
                       </>
@@ -498,19 +704,24 @@ export default function Jobs() {
                 </div>
               </div>
             ) : (
-              <span className="text-xs text-slate-400 text-center py-6 my-auto block">
-                Select a job posting to view details.
-              </span>
+              <div className="flex flex-col items-center justify-center my-auto py-10">
+                <svg className="w-16 h-16 text-slate-200 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+                <span className="text-xs text-slate-400 font-semibold text-center">
+                  Select a job posting on the left to see details.
+                </span>
+              </div>
             )}
           </div>
         </div>
       </div>
 
       {/* Easy Apply Modal */}
-      {isApplyModalOpen && (
+      {isApplyModalOpen && activeJob && (
         <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-white w-full max-w-md rounded-xl overflow-hidden shadow-2xl p-6 border border-slate-200 flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200">
-            <div className="flex justify-between items-center mb-4 pb-2 border-b border-slate-100">
+          <div className="bg-white w-full max-w-md rounded-xl overflow-hidden shadow-2xl p-6 border border-slate-200 flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200 text-left">
+            <div className="flex justify-between items-center mb-4 pb-2 border-b border-slate-100 select-none">
               <h3 className="font-bold text-base text-slate-800 flex items-center gap-1.5">
                 <span>📝</span>
                 <span>Apply to {activeJob.company}</span>
@@ -520,7 +731,7 @@ export default function Jobs() {
                 className="text-slate-400 hover:bg-slate-100 p-1.5 rounded-full cursor-pointer focus:outline-none"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
@@ -528,7 +739,7 @@ export default function Jobs() {
             {isSubmittingApp ? (
               <div className="flex flex-col items-center justify-center py-10 gap-3">
                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#0077b5]"></div>
-                <span className="text-sm font-semibold text-slate-600 animate-pulse text-center">Submitting application to {activeJob.company} recruiters...</span>
+                <span className="text-sm font-semibold text-slate-655 animate-pulse text-center">Submitting application to {activeJob.company} recruiters...</span>
                 <span className="text-xs text-slate-400">Uploading profile resume and cover letter...</span>
               </div>
             ) : (
@@ -553,51 +764,41 @@ export default function Jobs() {
                     alert(error.response?.data?.message || "Failed to submit application");
                   }
                 }}
-                className="flex flex-col gap-4 overflow-y-auto pr-1"
+                className="flex flex-col gap-4"
               >
-                {/* Contact Info */}
-                <div>
-                  <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Contact Information</h4>
-                  <div className="bg-slate-50 p-3 rounded-lg border border-slate-200 flex flex-col gap-1">
-                    <span className="text-xs font-semibold text-slate-800">{user?.name}</span>
-                    <span className="text-[10px] text-slate-500">{user?.headline || "LinkedIn Member"}</span>
-                    <span className="text-[10px] text-slate-400">{user?.email}</span>
-                  </div>
-                </div>
-
                 {/* Resume selection */}
                 <div>
-                  <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Resume</h4>
+                  <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Choose Resume</label>
                   <div className="flex flex-col gap-2">
-                    <label className="flex items-center gap-2 text-xs text-slate-700 cursor-pointer">
+                    <label className="flex items-center gap-2.5 p-3 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer text-xs">
                       <input
                         type="radio"
-                        name="resumeOpt"
+                        name="resume"
+                        value="profile"
                         checked={resumeOption === "profile"}
                         onChange={() => setResumeOption("profile")}
                         className="text-[#0077b5] focus:ring-[#0077b5]"
                       />
-                      <span>Use Auto-Generated Profile PDF Resume</span>
+                      <div className="flex flex-col">
+                        <span className="font-bold text-slate-700">Use LinkedIn Profile Resume</span>
+                        <span className="text-[10px] text-slate-400 mt-0.5">Includes your headline, school row, and matching skills.</span>
+                      </div>
                     </label>
-                    <label className="flex items-center gap-2 text-xs text-slate-700 cursor-pointer">
+
+                    <label className="flex items-center gap-2.5 p-3 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer text-xs">
                       <input
                         type="radio"
-                        name="resumeOpt"
+                        name="resume"
+                        value="upload"
                         checked={resumeOption === "upload"}
                         onChange={() => setResumeOption("upload")}
                         className="text-[#0077b5] focus:ring-[#0077b5]"
                       />
-                      <span>Upload Custom PDF file</span>
+                      <div className="flex flex-col">
+                        <span className="font-bold text-slate-700">Upload PDF / Word resume</span>
+                        <span className="text-[10px] text-slate-400 mt-0.5">Select a document from your local machine.</span>
+                      </div>
                     </label>
-
-                    {resumeOption === "upload" && (
-                      <input
-                        type="file"
-                        required
-                        accept=".pdf,.doc,.docx"
-                        className="mt-1 block w-full text-xs text-slate-500 file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-[10px] file:font-semibold file:bg-sky-50 file:text-[#0077b5] hover:file:bg-sky-100 cursor-pointer"
-                      />
-                    )}
                   </div>
                 </div>
 
@@ -608,16 +809,16 @@ export default function Jobs() {
                     value={coverLetter}
                     onChange={(e) => setCoverLetter(e.target.value)}
                     placeholder="Introduce yourself and explain why you're a great fit for this role..."
-                    className="w-full border border-slate-300 rounded px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-[#0077b5] text-slate-800 resize-none h-24"
+                    className="w-full border border-slate-300 rounded px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-[#0077b5] text-slate-800 resize-none h-24 font-sans"
                   />
                 </div>
 
                 {/* Skill Match Status */}
-                <div className="bg-sky-50/50 border border-sky-100 p-3 rounded-lg flex items-center gap-3">
+                <div className="bg-sky-50 border border-sky-100 p-3 rounded-lg flex items-center gap-3">
                   <div className="text-xl font-bold text-[#0077b5]">{matchPercentage}%</div>
                   <div className="flex flex-col">
-                    <span className="text-xs font-semibold text-slate-700">AI Skill Match Gauge</span>
-                    <span className="text-[10px] text-slate-500">
+                    <span className="text-xs font-bold text-slate-700">AI Skill Match Gauge</span>
+                    <span className="text-[10px] text-slate-500 font-medium">
                       {matchedSkills.length} of {matchedSkills.length + missingSkills.length} required skills matched.
                     </span>
                   </div>
@@ -633,7 +834,7 @@ export default function Jobs() {
                   </button>
                   <button
                     type="submit"
-                    className="px-5 py-1.5 rounded-full text-xs font-semibold text-white bg-[#0077b5] hover:bg-sky-850 cursor-pointer shadow-md"
+                    className="px-5 py-1.5 rounded-full text-xs font-bold text-white bg-[#0077b5] hover:bg-sky-850 cursor-pointer shadow-md"
                   >
                     Submit Application
                   </button>

@@ -6,7 +6,7 @@ import { logout } from "@/config/redux/reducer/authReducer";
 import { API_BASE_URL } from "@/config";
 
 export default function Header() {
-  const { user } = useSelector((state) => state.auth);
+  const { user, connectionRequests = [] } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const router = useRouter();
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -50,6 +50,7 @@ export default function Header() {
     {
       label: "My Network",
       href: "/network",
+      badge: connectionRequests?.length || 1,
       icon: (
         <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
           <path d="M12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0-6a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm0 8c3.67 0 11 1.84 11 5.5V24H1v-2.5c0-3.66 7.33-5.5 11-5.5zm0 1.9c-2.99 0-7.79 1.4-8.9 2.1v.5h17.8v-.5c-1.11-.7-5.91-2.1-8.9-2.1z" />
@@ -66,7 +67,7 @@ export default function Header() {
       ),
     },
     {
-      label: "Messages",
+      label: "Messaging",
       href: "/messages",
       icon: (
         <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
@@ -74,11 +75,21 @@ export default function Header() {
         </svg>
       ),
     },
+    {
+      label: "Notifications",
+      href: "#",
+      badge: 1,
+      icon: (
+        <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z" />
+        </svg>
+      ),
+    },
   ];
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-slate-200 shadow-sm">
-      <div className="max-w-6xl mx-auto px-4 flex items-center justify-between h-14">
+    <header className="sticky top-0 z-50 bg-white border-b border-slate-200 shadow-sm h-14">
+      <div className="max-w-6xl mx-auto px-4 flex items-center justify-between h-full">
         {/* Left Section: Logo & Search */}
         <div className="flex items-center gap-2 flex-grow md:flex-grow-0">
           <Link href="/" className="flex items-center">
@@ -88,7 +99,7 @@ export default function Header() {
           </Link>
           <div className="relative hidden md:block">
             <input
-              className="bg-[#edf3f8] text-slate-800 text-sm border-0 rounded px-9 py-2 w-64 focus:outline-none focus:ring-1 focus:ring-[#0077b5] focus:bg-white placeholder-slate-500 transition-all"
+              className="bg-[#edf3f8] text-slate-800 text-sm border-0 rounded-full px-9 py-2 w-64 focus:outline-none focus:ring-1 focus:ring-slate-900 focus:bg-white placeholder-slate-500 transition-all"
               placeholder="Search"
             />
             <svg
@@ -108,20 +119,27 @@ export default function Header() {
         </div>
 
         {/* Right Section: Navigation & Profile */}
-        <nav className="flex items-center gap-6 md:gap-8 h-full">
+        <nav className="flex items-center gap-3 md:gap-4 lg:gap-5 h-full">
           {navItems.map((item) => {
             const isActive = router.pathname === item.href;
             return (
               <Link
                 key={item.label}
                 href={item.href}
-                className={`flex flex-col items-center justify-center text-xs h-full min-w-[64px] border-b-2 transition-all ${
+                className={`flex flex-col items-center justify-center text-xs h-full min-w-[64px] border-b-2 transition-all relative ${
                   isActive
-                    ? "border-[#0077b5] text-slate-900 font-semibold"
+                    ? "border-slate-950 text-slate-955 font-bold"
                     : "border-transparent text-slate-500 hover:text-slate-900"
                 }`}
               >
-                {item.icon}
+                <div className="relative flex items-center justify-center">
+                  {item.icon}
+                  {item.badge && item.badge > 0 ? (
+                    <span className="absolute -top-1.5 -right-1.5 bg-red-600 text-white rounded-full text-[9px] font-bold min-w-4 h-4 px-1 flex items-center justify-center border border-white">
+                      {item.badge}
+                    </span>
+                  ) : null}
+                </div>
                 <span className="hidden sm:inline mt-1 text-[10px]">{item.label}</span>
               </Link>
             );
@@ -131,7 +149,7 @@ export default function Header() {
           <div className="relative h-full flex items-center" ref={dropdownRef}>
             <button
               onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="flex flex-col items-center justify-center text-slate-500 hover:text-slate-900 h-full border-b-2 border-transparent focus:outline-none"
+              className="flex flex-col items-center justify-center text-slate-500 hover:text-slate-900 h-full border-b-2 border-transparent focus:outline-none min-w-[64px]"
             >
               {user?.profilePicture ? (
                 <img
@@ -148,7 +166,7 @@ export default function Header() {
                   {getInitials(user?.name)}
                 </div>
               )}
-              <span className="hidden sm:inline mt-1 text-[10px] flex items-center gap-1">
+              <span className="hidden sm:inline mt-1 text-[10px] flex items-center gap-0.5">
                 Me
                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -198,6 +216,36 @@ export default function Header() {
               </div>
             )}
           </div>
+
+          {/* Vertical Separator */}
+          <div className="h-8 w-[1px] bg-slate-200 hidden md:block"></div>
+
+          {/* For Business */}
+          <Link
+            href="#"
+            className="hidden md:flex flex-col items-center justify-center text-xs h-full min-w-[64px] border-b-2 border-transparent text-slate-500 hover:text-slate-900 transition-all"
+          >
+            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M4 4h4v4H4zm6 0h4v4h-4zm6 0h4v4h-4zM4 10h4v4H4zm6 0h4v4h-4zm6 0h4v4h-4zM4 16h4v4H4zm6 0h4v4h-4zm6 0h4v4h-4z" />
+            </svg>
+            <span className="mt-1 text-[10px] flex items-center gap-0.5 whitespace-nowrap">
+              For Business
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </span>
+          </Link>
+
+          {/* Advertise */}
+          <Link
+            href="#"
+            className="hidden lg:flex flex-col items-center justify-center text-xs h-full min-w-[64px] border-b-2 border-transparent text-slate-550 hover:text-slate-900 transition-all"
+          >
+            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M20 12c0-1.1.9-2 2-2V8c-1.1 0-2-.9-2-2h-2c0 1.1-.9 2-2 2v2c1.1 0 2 .9 2 2s-.9 2-2 2v2c1.1 0 2 .9 2 2h2c0-1.1.9-2 2-2v-2c-1.1 0-2-.9-2-2zm-10 6.5h-3L3.5 14H2c-1.1 0-2-.9-2-2s.9-2 2-2h1.5L7 6.5h3c.83 0 1.5.67 1.5 1.5v9c0 .83-.67 1.5-1.5 1.5zM15 12c0-1.93-1.07-3.61-2.67-4.47v8.94c1.6-.86 2.67-2.54 2.67-4.47z" />
+            </svg>
+            <span className="mt-1 text-[10px]">Advertise</span>
+          </Link>
         </nav>
       </div>
     </header>
