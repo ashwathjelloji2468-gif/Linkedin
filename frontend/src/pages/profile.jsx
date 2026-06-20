@@ -1,13 +1,18 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Layout from "@/components/Layout";
 import api from "@/config";
-import { updateProfile, uploadAvatarAction, uploadBannerAction } from "@/config/redux/action/authAction";
+import { updateProfile, uploadAvatarAction, uploadBannerAction, fetchUserProfile } from "@/config/redux/action/authAction";
 import { API_BASE_URL } from "@/config";
 
 export default function Profile() {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
+
+  // Load profile data on mount
+  useEffect(() => {
+    dispatch(fetchUserProfile());
+  }, [dispatch]);
 
   // Modal display states
   const [isEditInfoOpen, setIsEditInfoOpen] = useState(false);
@@ -116,7 +121,9 @@ export default function Profile() {
     if (!file) return;
     const formData = new FormData();
     formData.append("profilePic", file);
-    dispatch(uploadAvatarAction(formData));
+    dispatch(uploadAvatarAction(formData)).then(() => {
+      dispatch(fetchUserProfile());
+    });
   };
 
   const handleBannerClick = () => {
@@ -128,7 +135,9 @@ export default function Profile() {
     if (!file) return;
     const formData = new FormData();
     formData.append("bannerPic", file);
-    dispatch(uploadBannerAction(formData));
+    dispatch(uploadBannerAction(formData)).then(() => {
+      dispatch(fetchUserProfile());
+    });
   };
 
   const handleDownloadResume = async () => {
@@ -232,7 +241,8 @@ export default function Profile() {
             ) : (
               <div className="w-full h-full group-hover:opacity-90 transition-opacity"></div>
             )}
-            <div className="absolute top-3 right-3 bg-black/50 hover:bg-black/70 rounded-full p-2 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-150 shadow-md">
+            {/* Always-visible Edit cover button */}
+            <div className="absolute bottom-3 right-3 bg-white hover:bg-slate-100 text-[#0077b5] border border-slate-200 rounded-full p-2 flex items-center justify-center shadow-md transition-all z-20">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -243,10 +253,10 @@ export default function Profile() {
           {/* Profile details */}
           <div className="px-6 pb-6 relative flex flex-col md:flex-row md:items-end justify-between items-start gap-4">
             
-            {/* Avatar uploader wrapper */}
+            {/* Avatar uploader wrapper - sized and styled exactly */}
             <div
               onClick={handleAvatarClick}
-              className="w-28 h-28 rounded-full overflow-hidden absolute -top-14 border-4 border-white shadow-md bg-white cursor-pointer group flex items-center justify-center"
+              className="w-32 h-32 rounded-full overflow-hidden absolute left-6 -top-16 border-4 border-white shadow-md bg-white cursor-pointer group flex items-center justify-center z-10"
             >
               {user?.profilePicture ? (
                 <img
@@ -267,7 +277,8 @@ export default function Profile() {
               </div>
             </div>
 
-            <div className="mt-16 md:mt-4 md:flex-grow">
+            {/* details text container - pl-0 on mobile, pl-36 on desktop to clear absolute avatar */}
+            <div className="mt-16 md:mt-4 md:pl-36 md:flex-grow text-left">
               <h1 className="text-xl font-bold text-slate-900">{user?.name}</h1>
               <span className="text-sm text-slate-650 block mt-0.5">{user?.headline || "Add a professional headline"}</span>
               <span className="text-xs text-slate-400 block mt-1">{user?.location || "Location not set"}</span>

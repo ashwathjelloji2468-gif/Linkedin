@@ -9,6 +9,9 @@ import multer from 'multer';
 // Routes
 import postRoutes from "./routes/posts.routes.js";
 import userRoutes from "./routes/users.routes.js";
+import newsRoutes from "./routes/news.routes.js";
+import chatsRoutes from "./routes/chats.routes.js";
+import { seedNewsIfEmpty } from "./controllers/news.controllers.js";
 
 const app = express();
 const upload = multer();
@@ -40,6 +43,8 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 // --- ROUTES ---
 app.use('/posts', postRoutes);
 app.use('/users', userRoutes);
+app.use('/news', newsRoutes);
+app.use('/chats', chatsRoutes);
 
 app.get("/", (req, res) => {
   res.send("LinkedIn Clone Backend API is running!");
@@ -53,6 +58,9 @@ const start = async () => {
 
     await mongoose.connect(uri);
     console.log("MongoDB Connected Successfully");
+
+    // Seed news articles on start
+    await seedNewsIfEmpty();
 
     const PORT = process.env.PORT || 9080;
     app.listen(PORT, () => {

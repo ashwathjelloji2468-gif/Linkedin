@@ -1,12 +1,16 @@
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useRouter } from "next/router";
 import PostComposer from "@/components/PostComposer";
 import PostCard from "@/components/PostCard";
 import { fetchPosts, createPost } from "@/config/redux/action/postAction";
 
 export default function Feed() {
   const dispatch = useDispatch();
+  const router = useRouter();
   const { items: posts, loading, error } = useSelector((state) => state.posts);
+
+  const searchQuery = router.query.search || "";
 
   useEffect(() => {
     dispatch(fetchPosts());
@@ -15,6 +19,13 @@ export default function Feed() {
   const handlePostSubmit = (postData) => {
     dispatch(createPost(postData));
   };
+
+  const filteredPosts = searchQuery.trim()
+    ? posts.filter((post) =>
+        post.body?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        post.userId?.name?.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : posts;
 
   return (
     <div className="flex flex-col">
@@ -43,15 +54,15 @@ export default function Feed() {
         <div className="bg-red-50 text-red-600 p-4 rounded-lg text-center text-xs font-medium border border-red-200 shadow-sm">
           Failed to load posts: {typeof error === "object" ? (error.message || "Failed to load posts") : error}
         </div>
-      ) : posts.length > 0 ? (
+      ) : filteredPosts.length > 0 ? (
         <div className="flex flex-col gap-2">
-          {posts.map((post) => (
+          {filteredPosts.map((post) => (
             <PostCard key={post._id} post={post} />
           ))}
         </div>
       ) : (
-        <div className="bg-white border border-slate-200 p-8 rounded-lg text-center text-slate-500 text-xs shadow-sm">
-          No posts available. Be the first to share something!
+        <div className="bg-white border border-slate-200 p-8 rounded-lg text-center text-slate-500 text-xs shadow-sm font-sans font-medium">
+          No matching posts available. Try another search query!
         </div>
       )}
     </div>

@@ -58,6 +58,18 @@ const UserSchema = new mongoose.Schema(
         coverLetter: { type: String }
       }
     ],
+    joinedGroups: {
+      type: [String],
+      default: [],
+    },
+    followedNewsletters: {
+      type: [String],
+      default: [],
+    },
+    followedPages: {
+      type: [String],
+      default: [],
+    },
     skills: [String],
     experience: [
       {
@@ -76,6 +88,10 @@ const UserSchema = new mongoose.Schema(
         graduationYear: Number,
       },
     ],
+    isPremium: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

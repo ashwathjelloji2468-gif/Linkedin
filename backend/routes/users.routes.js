@@ -17,7 +17,9 @@ import {
   whatAreMyConnections,
   acceptConnectionRequest,
   applyJob,
-  getAppliedJobs
+  getAppliedJobs,
+  updateDiscoverSettings,
+  upgradePremium
 } from "../controllers/users.controllers.js";
 
 const router = Router();
@@ -58,5 +60,7 @@ router.get("/requests",protectRoute, getMyConnectionRequests);
 router.get("/connections", protectRoute, whatAreMyConnections);
 router.put("/accept/:requestId", protectRoute, acceptConnectionRequest);
 router.post("/jobs/apply", protectRoute, applyJob);
+router.put("/update-discover", protectRoute, updateDiscoverSettings);
+router.put("/upgrade-premium", protectRoute, upgradePremium);
 router.get("/jobs/applied", protectRoute, getAppliedJobs);
 export default router;

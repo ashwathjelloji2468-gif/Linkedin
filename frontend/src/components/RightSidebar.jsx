@@ -1,8 +1,26 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import api from "@/config";
 
 export default function RightSidebar() {
   const [showAllNews, setShowAllNews] = useState(false);
   const [showAllPuzzles, setShowAllPuzzles] = useState(false);
+  const [news, setNews] = useState([]);
+  const [loadingNews, setLoadingNews] = useState(true);
+
+  useEffect(() => {
+    const fetchNews = async () => {
+      try {
+        const res = await api.get("/news");
+        setNews(res.data?.articles || []);
+      } catch (err) {
+        console.error("Failed to fetch news from backend:", err.message);
+      } finally {
+        setLoadingNews(false);
+      }
+    };
+    fetchNews();
+  }, []);
 
   const mainNews = [
     {
@@ -51,6 +69,9 @@ export default function RightSidebar() {
   ];
 
   const activeNews = showAllNews ? [...mainNews, ...extraNews] : mainNews;
+  const activeNewsList = news.length > 0
+    ? (showAllNews ? news : news.slice(0, 5))
+    : activeNews;
 
   const mainPuzzles = [
     {
@@ -112,22 +133,25 @@ export default function RightSidebar() {
           </svg>
         </div>
 
-        <div className="flex flex-col gap-3 mb-2">
-          {activeNews.map((item, idx) => (
-            <div key={idx} className="group cursor-pointer">
-              <div className="flex items-start gap-2.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-slate-400 mt-1.5 group-hover:bg-[#0077b5] transition-colors flex-shrink-0"></span>
-                <div className="flex flex-col flex-1 min-w-0">
-                  <span className="text-xs font-bold text-slate-700 group-hover:text-[#0077b5] group-hover:underline transition-all leading-snug truncate">
-                    {item.title}
-                  </span>
-                  <span className="text-[10px] text-slate-400 mt-0.5 font-medium">
-                    {item.time} • {item.readers}
-                  </span>
+        <div className="flex flex-col gap-3 mb-2 font-sans">
+          {activeNewsList.map((item, idx) => {
+            const href = item._id ? `/news/${item._id}` : "#";
+            return (
+              <Link href={href} key={item._id || idx} className="group cursor-pointer block">
+                <div className="flex items-start gap-2.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-slate-400 mt-1.5 group-hover:bg-[#0077b5] transition-colors flex-shrink-0"></span>
+                  <div className="flex flex-col flex-1 min-w-0">
+                    <span className="text-xs font-bold text-slate-700 group-hover:text-[#0077b5] group-hover:underline transition-all leading-snug truncate">
+                      {item.title}
+                    </span>
+                    <span className="text-[10px] text-slate-400 mt-0.5 font-medium">
+                      {item.time} • {item.readers}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            </div>
-          ))}
+              </Link>
+            );
+          })}
         </div>
 
         <button

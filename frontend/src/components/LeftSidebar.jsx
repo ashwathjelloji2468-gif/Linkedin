@@ -75,7 +75,7 @@ export default function LeftSidebar() {
 
         {/* Premium Promo section */}
         <div className="p-3 border-b border-slate-200 hover:bg-slate-50 transition-all text-left">
-          <Link href="#" className="flex flex-col gap-1">
+          <Link href="/premium" className="flex flex-col gap-1">
             <span className="text-[10px] text-slate-550 leading-snug">
               Get 4x more recruiter views on average with AI tools
             </span>
@@ -146,9 +146,9 @@ export default function LeftSidebar() {
           </li>
         </ul>
         <div className="border-t border-slate-100 mt-3 pt-2 text-center">
-          <span className="text-xs font-semibold text-[#0077b5] hover:underline cursor-pointer">
+          <Link href="/discover" className="text-xs font-semibold text-[#0077b5] hover:underline cursor-pointer">
             Discover more
-          </span>
+          </Link>
         </div>
       </div>
     </div>

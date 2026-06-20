@@ -838,3 +838,75 @@ const seedMockTechLeadersAndRequests = async (userId) => {
   }
 };
 
+export const updateDiscoverSettings = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { type, name, action } = req.body;
+
+    if (!type || !name || !action) {
+      return res.status(400).json({ message: "Type, name, and action are required" });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    let fieldToUpdate = "";
+    if (type === "group") {
+      fieldToUpdate = "joinedGroups";
+    } else if (type === "newsletter") {
+      fieldToUpdate = "followedNewsletters";
+    } else if (type === "page") {
+      fieldToUpdate = "followedPages";
+    } else {
+      return res.status(400).json({ message: "Invalid type" });
+    }
+
+    const currentArray = user[fieldToUpdate] || [];
+    const index = currentArray.indexOf(name);
+
+    if (action === "follow" || action === "join") {
+      if (index === -1) {
+        user[fieldToUpdate].push(name);
+      }
+    } else if (action === "unfollow" || action === "leave") {
+      if (index !== -1) {
+        user[fieldToUpdate].splice(index, 1);
+      }
+    }
+
+    await user.save();
+    return res.status(200).json({
+      message: "Discover settings updated successfully",
+      joinedGroups: user.joinedGroups,
+      followedNewsletters: user.followedNewsletters,
+      followedPages: user.followedPages
+    });
+  } catch (error) {
+    console.error("Update discover error:", error.message);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const upgradePremium = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { isPremium: true },
+      { new: true }
+    );
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    return res.status(200).json({
+      message: "Upgraded to Premium successfully",
+      isPremium: user.isPremium
+    });
+  } catch (error) {
+    console.error("Upgrade premium error:", error.message);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
