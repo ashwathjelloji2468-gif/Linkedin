@@ -763,27 +763,44 @@ const seedMockTechLeadersAndRequests = async (userId) => {
         await leaderUser.save();
       }
 
-      // Check if they are already connected
-      if (user.connections.includes(leaderUser._id)) {
-        continue;
-      }
+      const immediateCEOs = ["Satya Nadella", "Sundar Pichai", "Elon Musk"];
+      if (immediateCEOs.includes(leaderUser.name)) {
+        // Immediately connect
+        let userModified = false;
+        if (!user.connections.includes(leaderUser._id)) {
+          user.connections.push(leaderUser._id);
+          userModified = true;
+        }
+        if (!leaderUser.connections.includes(user._id)) {
+          leaderUser.connections.push(user._id);
+          await leaderUser.save();
+        }
+        if (userModified) {
+          await user.save();
+        }
+      } else {
+        // Check if they are already connected
+        if (user.connections.includes(leaderUser._id)) {
+          continue;
+        }
 
-      // Check if a request already exists between them
-      const existingRequest = await ConnectionRequest.findOne({
-        $or: [
-          { sender: user._id, recipient: leaderUser._id },
-          { sender: leaderUser._id, recipient: user._id }
-        ]
-      });
-
-      if (!existingRequest) {
-        // Create a pending invitation FROM the leader TO the user
-        const newRequest = new ConnectionRequest({
-          sender: leaderUser._id,
-          recipient: user._id,
-          status: "pending"
+        // Check if a request already exists between them
+        const existingRequest = await ConnectionRequest.findOne({
+          $or: [
+            { sender: user._id, recipient: leaderUser._id },
+            { sender: leaderUser._id, recipient: user._id }
+          ]
         });
-        await newRequest.save();
+
+        if (!existingRequest) {
+          // Create a pending invitation FROM the leader TO the user
+          const newRequest = new ConnectionRequest({
+            sender: leaderUser._id,
+            recipient: user._id,
+            status: "pending"
+          });
+          await newRequest.save();
+        }
       }
     }
 
@@ -906,6 +923,52 @@ export const upgradePremium = async (req, res) => {
     });
   } catch (error) {
     console.error("Upgrade premium error:", error.message);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const createBusinessCompany = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { name, industry, website, size, description } = req.body;
+    if (!name || !industry) {
+      return res.status(400).json({ message: "Company name and industry are required" });
+    }
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    user.businessCompanies.push({ name, industry, website, size, description });
+    await user.save();
+
+    return res.status(200).json({
+      message: "Business company created successfully",
+      businessCompanies: user.businessCompanies
+    });
+  } catch (error) {
+    console.error("Create business company error:", error.message);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const createAdCampaign = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { name, objective, budget, targetAudience } = req.body;
+    if (!name || !objective || !budget) {
+      return res.status(400).json({ message: "Campaign name, objective, and budget are required" });
+    }
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    user.adCampaigns.push({ name, objective, budget: Number(budget), targetAudience });
+    await user.save();
+
+    return res.status(200).json({
+      message: "Ad campaign created successfully",
+      adCampaigns: user.adCampaigns
+    });
+  } catch (error) {
+    console.error("Create ad campaign error:", error.message);
     return res.status(500).json({ message: "Internal server error" });
   }
 };

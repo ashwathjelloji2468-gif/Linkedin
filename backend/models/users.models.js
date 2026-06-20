@@ -92,6 +92,27 @@ const UserSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    businessCompanies: [
+      {
+        name: String,
+        industry: String,
+        website: String,
+        size: String,
+        description: String,
+        createdAt: { type: Date, default: Date.now }
+      }
+    ],
+    adCampaigns: [
+      {
+        name: String,
+        objective: String,
+        status: { type: String, default: "Active" },
+        budget: Number,
+        targetAudience: String,
+        spent: { type: Number, default: 0 },
+        createdAt: { type: Date, default: Date.now }
+      }
+    ],
   },
   {
     timestamps: true,

@@ -437,11 +437,9 @@ export default function Header() {
           <div className="h-8 w-[1px] bg-slate-200 hidden md:block"></div>
 
           {/* For Business */}
-          <a
-            href="https://www.linkedin.com/business/solutions"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hidden md:flex flex-col items-center justify-center text-xs h-full min-w-[64px] border-b-2 border-transparent text-slate-500 hover:text-slate-900 transition-all"
+          <Link
+            href="/business"
+            className="hidden md:flex flex-col items-center justify-center text-xs h-full min-w-[64px] border-b-2 border-transparent text-slate-500 hover:text-slate-900 transition-all cursor-pointer"
           >
             <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
               <path d="M4 4h4v4H4zm6 0h4v4h-4zm6 0h4v4h-4zM4 10h4v4H4zm6 0h4v4h-4zm6 0h4v4h-4zM4 16h4v4H4zm6 0h4v4h-4zm6 0h4v4h-4z" />
@@ -452,20 +450,18 @@ export default function Header() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
             </span>
-          </a>
+          </Link>
 
           {/* Advertise */}
-          <a
-            href="https://www.linkedin.com/talent-solutions/recruiting-solutions"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hidden lg:flex flex-col items-center justify-center text-xs h-full min-w-[64px] border-b-2 border-transparent text-slate-550 hover:text-slate-900 transition-all"
+          <Link
+            href="/advertise"
+            className="hidden lg:flex flex-col items-center justify-center text-xs h-full min-w-[64px] border-b-2 border-transparent text-slate-550 hover:text-slate-900 transition-all cursor-pointer"
           >
             <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
               <path d="M20 12c0-1.1.9-2 2-2V8c-1.1 0-2-.9-2-2h-2c0 1.1-.9 2-2 2v2c1.1 0 2 .9 2 2s-.9 2-2 2v2c1.1 0 2 .9 2 2h2c0-1.1.9-2 2-2v-2c-1.1 0-2-.9-2-2zm-10 6.5h-3L3.5 14H2c-1.1 0-2-.9-2-2s.9-2 2-2h1.5L7 6.5h3c.83 0 1.5.67 1.5 1.5v9c0 .83-.67 1.5-1.5 1.5zM15 12c0-1.93-1.07-3.61-2.67-4.47v8.94c1.6-.86 2.67-2.54 2.67-4.47z" />
             </svg>
             <span className="mt-1 text-[10px]">Advertise</span>
-          </a>
+          </Link>
         </nav>
       </div>
 
