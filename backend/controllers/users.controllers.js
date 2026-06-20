@@ -1,6 +1,7 @@
 import User from "../models/users.models.js";
 import Profile from "../models/profile.models.js";
 import ConnectionRequest from "../models/connections.models.js";
+import Post from "../models/posts.models.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import PDFDocument from "pdfkit";
@@ -783,6 +784,53 @@ const seedMockTechLeadersAndRequests = async (userId) => {
           status: "pending"
         });
         await newRequest.save();
+      }
+    }
+
+    // Seed default posts and comments from mock leaders if there are no posts in the DB
+    const postCount = await Post.countDocuments();
+    if (postCount === 0) {
+      const satya = await User.findOne({ name: "Satya Nadella" });
+      const sundar = await User.findOne({ name: "Sundar Pichai" });
+      const elon = await User.findOne({ name: "Elon Musk" });
+      const sam = await User.findOne({ name: "Sam Altman" });
+      const jensen = await User.findOne({ name: "Jensen Huang" });
+      const mark = await User.findOne({ name: "Mark Zuckerberg" });
+
+      if (satya && sundar && elon && sam && jensen && mark) {
+        const post1 = new Post({
+          userId: satya._id,
+          body: "Microsoft Copilot and AI agents are transforming every industry. We believe the future of software is agentic, where every developer has a team of autonomous agents assisting them.",
+          comments: [
+            { userId: sundar._id, text: "Fully agree, Satya. The combination of agentic models with cloud infrastructure is the next major shift in tech.", createdAt: new Date() },
+            { userId: elon._id, text: "Make sure they are safe and compile clean code. AGI is closer than most think.", createdAt: new Date() }
+          ],
+          likes: [sundar._id, sam._id, jensen._id],
+          likesCount: 3
+        });
+        await post1.save();
+
+        const post2 = new Post({
+          userId: elon._id,
+          body: "Tesla FSD v12 is completely neural-net based. It is solving real-world AI. Real-world physical AI is the hardest and most important problem.",
+          comments: [
+            { userId: sam._id, text: "Physical robotics combined with advanced frontier models is going to be incredibly impactful. Exciting times.", createdAt: new Date() }
+          ],
+          likes: [jensen._id, mark._id],
+          likesCount: 2
+        });
+        await post2.save();
+
+        const post3 = new Post({
+          userId: jensen._id,
+          body: "The Blackwell GPUs are in full production. Accelerated computing is the only sustainable path forward for IT. Remember, the more you buy, the more you save!",
+          comments: [
+            { userId: mark._id, text: "Looking forward to adding a few hundred thousand Blackwells to our Meta AI training cluster. Llama 3 is scaling up.", createdAt: new Date() }
+          ],
+          likes: [satya._id, sundar._id, elon._id],
+          likesCount: 3
+        });
+        await post3.save();
       }
     }
   } catch (error) {

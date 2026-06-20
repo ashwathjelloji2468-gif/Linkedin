@@ -104,7 +104,7 @@ export default function LeftSidebar() {
 
         {/* Secondary Links list */}
         <div className="p-3 text-[11px] font-bold text-slate-600 flex flex-col gap-2.5 text-left">
-          <Link href="#" className="flex items-center gap-2 hover:text-[#0077b5] transition-colors">
+          <Link href="/jobs?tab=applied" className="flex items-center gap-2 hover:text-[#0077b5] transition-colors">
             <svg className="w-4 h-4 text-slate-500" fill="currentColor" viewBox="0 0 24 24">
               <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z" />
             </svg>

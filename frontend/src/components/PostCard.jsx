@@ -8,8 +8,24 @@ export default function PostCard({ post }) {
   const { user } = useSelector((state) => state.auth);
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState("");
+  const [toastMessage, setToastMessage] = useState("");
 
   const currentUserId = user?._id || user?.id;
+
+  const handleShare = () => {
+    if (typeof window !== "undefined") {
+      const url = `${window.location.origin}/posts/${post._id}`;
+      navigator.clipboard.writeText(url).then(() => {
+        setToastMessage("Post link copied to clipboard!");
+        setTimeout(() => setToastMessage(""), 2000);
+      });
+    }
+  };
+
+  const handleSend = () => {
+    setToastMessage("Post sent to direct messages!");
+    setTimeout(() => setToastMessage(""), 2000);
+  };
   const author = post.userId || {};
   const isPostOwner = author._id === currentUserId || author.id === currentUserId;
 
@@ -156,15 +172,21 @@ export default function PostCard({ post }) {
       </div>
 
       {/* Interactive Actions Panel */}
-      <div className="flex items-center justify-between px-2 py-1 text-slate-600 font-semibold text-xs border-b border-slate-100">
+      <div className="flex items-center justify-between px-2 py-1 text-slate-655 font-bold text-xs border-b border-slate-100 relative select-none">
+        {toastMessage && (
+          <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 bg-slate-900/95 text-white text-[11px] font-bold py-1.5 px-4 rounded-full shadow-xl z-50 animate-in fade-in duration-200">
+            {toastMessage}
+          </div>
+        )}
+
         <button
           onClick={handleLike}
-          className={`flex items-center justify-center gap-2 flex-grow hover:bg-slate-50 py-2.5 rounded-md transition-colors ${
+          className={`flex items-center justify-center gap-1.5 flex-grow hover:bg-slate-50 py-2 rounded-md transition-colors ${
             hasLiked ? "text-[#0077b5]" : "text-slate-600"
           }`}
         >
           <svg
-            className="w-5 h-5"
+            className="w-4.5 h-4.5"
             fill={hasLiked ? "currentColor" : "none"}
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -181,9 +203,9 @@ export default function PostCard({ post }) {
 
         <button
           onClick={() => setShowComments(!showComments)}
-          className="flex items-center justify-center gap-2 flex-grow hover:bg-slate-50 py-2.5 rounded-md transition-colors text-slate-600"
+          className="flex items-center justify-center gap-1.5 flex-grow hover:bg-slate-50 py-2 rounded-md transition-colors text-slate-600"
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -192,6 +214,36 @@ export default function PostCard({ post }) {
             />
           </svg>
           <span>Comment</span>
+        </button>
+
+        <button
+          onClick={handleShare}
+          className="flex items-center justify-center gap-1.5 flex-grow hover:bg-slate-50 py-2 rounded-md transition-colors text-slate-600"
+        >
+          <svg className="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.023-2.148l-4.94-2.47a3.027 3.027 0 000-.342l4.94-2.47A2.98 2.98 0 0015 8z"
+            />
+          </svg>
+          <span>Share</span>
+        </button>
+
+        <button
+          onClick={handleSend}
+          className="flex items-center justify-center gap-1.5 flex-grow hover:bg-slate-50 py-2 rounded-md transition-colors text-slate-600"
+        >
+          <svg className="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 19l9-2-9-18-9 18 9-2zm0 0v-8"
+            />
+          </svg>
+          <span>Send</span>
         </button>
       </div>
 

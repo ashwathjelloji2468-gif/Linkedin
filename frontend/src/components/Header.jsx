@@ -10,7 +10,17 @@ export default function Header() {
   const dispatch = useDispatch();
   const router = useRouter();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const notificationsRef = useRef(null);
+
+  const [notifications, setNotifications] = useState([
+    { id: 1, text: "Satya Nadella accepted your connection request.", time: "2h ago", unread: true },
+    { id: 2, text: "Sundar Pichai viewed your profile.", time: "4h ago", unread: true },
+    { id: 3, text: "Elon Musk liked your post.", time: "1d ago", unread: false },
+    { id: 4, text: "Your job application to AST SpaceMobile was received.", time: "2d ago", unread: false },
+    { id: 5, text: "Sam Altman sent you a message.", time: "3d ago", unread: false }
+  ]);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -21,6 +31,9 @@ export default function Header() {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setDropdownOpen(false);
+      }
+      if (notificationsRef.current && !notificationsRef.current.contains(event.target)) {
+        setNotificationsOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -78,7 +91,7 @@ export default function Header() {
     {
       label: "Notifications",
       href: "#",
-      badge: 1,
+      badge: notifications.filter(n => n.unread).length || 1,
       icon: (
         <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
           <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z" />
@@ -88,7 +101,7 @@ export default function Header() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-slate-200 shadow-sm h-14">
+    <header className="sticky top-0 z-50 bg-white border-b border-slate-200 shadow-sm h-14 select-none">
       <div className="max-w-6xl mx-auto px-4 flex items-center justify-between h-full">
         {/* Left Section: Logo & Search */}
         <div className="flex items-center gap-2 flex-grow md:flex-grow-0">
@@ -122,6 +135,64 @@ export default function Header() {
         <nav className="flex items-center gap-3 md:gap-4 lg:gap-5 h-full">
           {navItems.map((item) => {
             const isActive = router.pathname === item.href;
+
+            if (item.label === "Notifications") {
+              return (
+                <div key={item.label} className="relative h-full flex items-center" ref={notificationsRef}>
+                  <button
+                    onClick={() => setNotificationsOpen(!notificationsOpen)}
+                    className="flex flex-col items-center justify-center text-xs h-full min-w-[64px] border-b-2 border-transparent text-slate-550 hover:text-slate-900 transition-all focus:outline-none cursor-pointer"
+                  >
+                    <div className="relative flex items-center justify-center">
+                      {item.icon}
+                      {item.badge && item.badge > 0 ? (
+                        <span className="absolute -top-1.5 -right-1.5 bg-red-600 text-white rounded-full text-[9px] font-bold min-w-4 h-4 px-1 flex items-center justify-center border border-white">
+                          {item.badge}
+                        </span>
+                      ) : null}
+                    </div>
+                    <span className="hidden sm:inline mt-1 text-[10px]">{item.label}</span>
+                  </button>
+
+                  {notificationsOpen && (
+                    <div className="absolute right-0 top-14 bg-white rounded-lg border border-slate-200 shadow-lg py-2 w-80 text-xs text-slate-800 animate-in fade-in slide-in-from-top-2 duration-100 z-50">
+                      <div className="px-4 py-2 border-b border-slate-100 font-bold text-slate-900 flex justify-between items-center">
+                        <span>Notifications</span>
+                        <button
+                          onClick={() => setNotifications(notifications.map(n => ({ ...n, unread: false })))}
+                          className="text-[10px] text-[#0077b5] hover:underline font-semibold focus:outline-none cursor-pointer"
+                        >
+                          Mark all as read
+                        </button>
+                      </div>
+                      <div className="max-h-64 overflow-y-auto divide-y divide-slate-100">
+                        {notifications.map((n) => (
+                          <div
+                            key={n.id}
+                            className={`px-4 py-3 flex gap-2.5 items-start hover:bg-slate-50 transition-colors cursor-pointer ${
+                              n.unread ? "bg-blue-50/20" : ""
+                            }`}
+                            onClick={() => {
+                              setNotifications(notifications.map(item => item.id === n.id ? { ...item, unread: false } : item));
+                            }}
+                          >
+                            <div
+                              className="w-1.5 h-1.5 rounded-full bg-blue-600 mt-1.5 flex-shrink-0"
+                              style={{ visibility: n.unread ? "visible" : "hidden" }}
+                            ></div>
+                            <div className="flex-grow">
+                              <p className="text-slate-700 leading-snug font-medium text-left">{n.text}</p>
+                              <span className="text-[10px] text-slate-400 mt-1 block text-left font-medium">{n.time}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            }
+
             return (
               <Link
                 key={item.label}
@@ -175,7 +246,7 @@ export default function Header() {
             </button>
 
             {dropdownOpen && (
-              <div className="absolute right-0 top-14 bg-white rounded-lg border border-slate-200 shadow-lg py-3 w-64 text-sm text-slate-800 animate-in fade-in slide-in-from-top-2 duration-100">
+              <div className="absolute right-0 top-14 bg-white rounded-lg border border-slate-200 shadow-lg py-3 w-64 text-sm text-slate-800 animate-in fade-in slide-in-from-top-2 duration-100 z-50">
                 <div className="px-4 pb-3 border-b border-slate-100 flex items-center gap-3">
                   {user?.profilePicture ? (
                     <img
@@ -188,27 +259,27 @@ export default function Header() {
                       {getInitials(user?.name)}
                     </div>
                   )}
-                  <div className="overflow-hidden">
+                  <div className="overflow-hidden text-left">
                     <div className="font-semibold text-slate-900 truncate">{user?.name}</div>
                     <div className="text-[11px] text-slate-500 truncate">{user?.headline || "No headline"}</div>
                   </div>
                 </div>
 
-                <div className="py-2">
+                <div className="py-2 text-left">
                   <Link
                     href="/profile"
                     onClick={() => setDropdownOpen(false)}
-                    className="block px-4 py-2 hover:bg-slate-50 text-[#0077b5] font-semibold text-xs border border-transparent rounded-full mx-4 my-1 text-center"
+                    className="block px-4 py-2 hover:bg-slate-55 hover:text-sky-800 text-[#0077b5] font-semibold text-xs border border-transparent rounded-full mx-4 my-1 text-center"
                     style={{ border: "1px solid #0077b5" }}
                   >
                     View Profile
                   </Link>
                 </div>
 
-                <div className="border-t border-slate-100 pt-2 px-4">
+                <div className="border-t border-slate-100 pt-2 px-4 text-left">
                   <button
                     onClick={handleLogout}
-                    className="w-full text-left text-slate-500 hover:text-slate-900 py-1 hover:underline font-medium text-xs"
+                    className="w-full text-left text-slate-550 hover:text-slate-900 py-1 hover:underline font-medium text-xs cursor-pointer"
                   >
                     Sign Out
                   </button>
@@ -221,8 +292,10 @@ export default function Header() {
           <div className="h-8 w-[1px] bg-slate-200 hidden md:block"></div>
 
           {/* For Business */}
-          <Link
-            href="#"
+          <a
+            href="https://www.linkedin.com/business/solutions"
+            target="_blank"
+            rel="noopener noreferrer"
             className="hidden md:flex flex-col items-center justify-center text-xs h-full min-w-[64px] border-b-2 border-transparent text-slate-500 hover:text-slate-900 transition-all"
           >
             <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
@@ -234,18 +307,20 @@ export default function Header() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
             </span>
-          </Link>
+          </a>
 
           {/* Advertise */}
-          <Link
-            href="#"
+          <a
+            href="https://www.linkedin.com/talent-solutions/recruiting-solutions"
+            target="_blank"
+            rel="noopener noreferrer"
             className="hidden lg:flex flex-col items-center justify-center text-xs h-full min-w-[64px] border-b-2 border-transparent text-slate-550 hover:text-slate-900 transition-all"
           >
             <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
               <path d="M20 12c0-1.1.9-2 2-2V8c-1.1 0-2-.9-2-2h-2c0 1.1-.9 2-2 2v2c1.1 0 2 .9 2 2s-.9 2-2 2v2c1.1 0 2 .9 2 2h2c0-1.1.9-2 2-2v-2c-1.1 0-2-.9-2-2zm-10 6.5h-3L3.5 14H2c-1.1 0-2-.9-2-2s.9-2 2-2h1.5L7 6.5h3c.83 0 1.5.67 1.5 1.5v9c0 .83-.67 1.5-1.5 1.5zM15 12c0-1.93-1.07-3.61-2.67-4.47v8.94c1.6-.86 2.67-2.54 2.67-4.47z" />
             </svg>
             <span className="mt-1 text-[10px]">Advertise</span>
-          </Link>
+          </a>
         </nav>
       </div>
     </header>
